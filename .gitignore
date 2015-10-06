@@ -17,6 +17,9 @@
 # IntelliJ
 /out/
 
+# Virtual environment
+*virtualenv*
+
 
 ###############################################################
 # Python
