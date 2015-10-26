@@ -17,8 +17,8 @@
 # IntelliJ
 /out/
 
-# Virtual environment
-*env*
+# Virtual environment directory
+*env*/
 
 
 ###############################################################
