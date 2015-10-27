@@ -40,17 +40,13 @@ class DITICConfig:
         :return: None
         """
         self.email_to_user = {
-            'vapi@uc.pt': 'Vapi',
-            'mviegas@uc.pt': 'Margarida',
-            'gina.costa@uc.pt': 'Gina',
-            'asantos@uc.pt': 'Alex',
-            'cpratas@uc.pt': 'Carlos',
-            'joaquim.silva@uc.pt': 'Joaquim',
-            'lcastro@uc.pt': 'Paulo',
-            'flaviopereira@uc.pt': 'Flavio',
-            'olivio@uc.pt': 'Olivio',
-            'cdantas@uc.pt': 'Carla',
-            'apleitao@uc.pt': 'Paula',
+            'vapi@uc.pt': 'vapi',
+            'edd@uc.pt': 'edd',
+            'root@uc.pt': 'root',
+            'alexandre@uc.pt': 'alexandre',
+            'andre@uc.pt': 'andre',
+            'gloriya@uc.pt': 'gloriya',
+            'robcunha@uc.pt': 'roberto',
         }
         self.email_limits = {
             'vapi@uc.pt': {
@@ -58,54 +54,37 @@ class DITICConfig:
                 'open': 1,
                 'rejected': 7,
             },
-            'mviegas@uc.pt': {
-                'new': 6,
-                'open': 2,
-                'rejected': 6,
-            },
-            'gina.costa@uc.pt': {
+            'edd@uc.pt': {
                 'new': 5,
                 'open': 2,
                 'rejected': 5,
             },
-            'asantos@uc.pt': {
-                'new': 14,
-                'open': 2,
-                'rejected': 14,
-            },
-            'cpratas@uc.pt': {
-                'new': 5,
-                'open': 3,
-                'rejected': 5,
-            },
-            'joaquim.silva@uc.pt': {
-                'new': 5,
-                'open': 1,
-                'rejected': 5,
-            },
-            'lcastro@uc.pt': {
-                'new': 7,
-                'open': 3,
-                'rejected': 7,
-            },
-            'flaviopereira@uc.pt': {
-                'new': 8,
-                'open': 3,
-                'rejected': 8,
-            },
-            'olivio@uc.pt': {
-                'new': 7,
-                'open': 3,
-                'rejected': 7,
-            },
-            'cdantas@uc.pt': {
-                'new': 7,
-                'open': 3,
-                'rejected': 7,
-            },
-            'apleitao@uc.pt': {
+            'root@localhost': {
                 'new': 5,
                 'open': 2,
+                'rejected': 5,
+            },
+            'alexandre@uc.pt': {
+                'new': 5,
+                'open': 2,
+
+                'rejected': 5,
+            },
+            'andre@uc.pt': {
+                'new': 5,
+                'open': 2,
+
+                'rejected': 5,
+            },
+            'gloriya@uc.pt': {
+                'new': 5,
+                'open': 2,
+
+                'rejected': 5,
+            },'robcunha@uc.pt': {
+                'new': 5,
+                'open': 2,
+
                 'rejected': 5,
             },
         }
@@ -118,11 +97,11 @@ class DITICConfig:
             'deleted',
         ]
         self.system = {
-            'working_dir': '/usr/local/dir/tmp/ditic-rt',
+            'working_dir': 'C:\Users\User\Desktop\RTdashboard-source\dashboard\ditic_kanban',
             'summary_file': 'summary',
-            'server': 'server_address',
-            'username': 'username',
-            'password': 'password',
+            'server': 'domo-kun.noip.me/rt/',
+            'username': 'root@uc.pt',
+            'password': 'shutup',
             'statistics_file': 'statistics',
         }
 
