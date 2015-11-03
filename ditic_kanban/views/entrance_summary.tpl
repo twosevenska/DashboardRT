@@ -123,7 +123,7 @@
                       <audio autoplay="autoplay">
                          <source src="/static/alert1.mp3" />
                       </audio>
-                        <a href="https://suporte.uc.pt/Ticket/Display.html?id={{ticket_info['id']}}">
+                        <a href="http://domo-kun.noip.me/rt/Ticket/Display.html?id={{ticket_info['id']}}">
                             {{ticket_info['subject']}}
                         </a>
                         % if username:
