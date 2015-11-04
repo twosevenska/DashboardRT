@@ -5,6 +5,7 @@
 # This python file aim is to provide all configuration necessary for using this packageI
 #
 
+import os;
 
 class DITICConfig:
     """
@@ -47,6 +48,7 @@ class DITICConfig:
             'andre@uc.pt': 'andre',
             'gloriya@uc.pt': 'gloriya',
             'robcunha@uc.pt': 'roberto',
+            'twoskie@uc.pt': 'twoskie',
         }
         self.email_limits = {
             'vapi@uc.pt': {
@@ -59,7 +61,7 @@ class DITICConfig:
                 'open': 2,
                 'rejected': 5,
             },
-            'root@localhost': {
+            'root@uc.pt': {
                 'new': 5,
                 'open': 2,
                 'rejected': 5,
@@ -81,7 +83,14 @@ class DITICConfig:
                 'open': 2,
 
                 'rejected': 5,
-            },'robcunha@uc.pt': {
+            },
+            'robcunha@uc.pt': {
+                'new': 5,
+                'open': 2,
+
+                'rejected': 5,
+            },
+            'twoskie@uc.pt': {
                 'new': 5,
                 'open': 2,
 
@@ -97,7 +106,7 @@ class DITICConfig:
             'deleted',
         ]
         self.system = {
-            'working_dir': 'C:\Users\User\Desktop\RTdashboard-source\dashboard\ditic_kanban',
+            'working_dir': os.path.join(os.getcwd(), 'json'),
             'summary_file': 'summary',
             'server': 'domo-kun.noip.me/rt/',
             'username': 'root@uc.pt',

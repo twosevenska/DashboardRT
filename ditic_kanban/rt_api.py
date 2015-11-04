@@ -49,7 +49,7 @@ class RTApi:
         # Use the correct cookie
         urllib2.install_opener(self.opener)
 
-        uri = 'https://' + self.server + '/REST/1.0/' + uri
+        uri = 'http://' + self.server + '/REST/1.0/' + uri
         data = data or dict()
         data.update({'user': self.username, 'pass': self.password})
         data_url_encode = urllib.urlencode(data)
@@ -60,7 +60,7 @@ class RTApi:
             return [i.decode('utf-8').strip().lower() for i in response]
         except urllib2.URLError:
             # Could not contact server!
-            raise ValueError('Not able to contact server!')
+            raise ValueError('Not able to contact server.')
 
 
 def get_list_of_tickets(rt_object, query, detail=True):

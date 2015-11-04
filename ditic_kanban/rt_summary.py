@@ -148,7 +148,6 @@ def generate_summary_file():
     rt_object = RTApi(system['server'], system['username'], system['password'])
 
     summary = __generate_summary_file(rt_object, list_emails, list_status)
-
     # The summary of all files will be flushed to this file.
     try:
         with open(summary_filename(system['working_dir'], system['summary_file']), 'w') as file_handler:
