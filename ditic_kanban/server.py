@@ -4,6 +4,7 @@
 # This module is responsible for web routing. This is the main web server.
 #
 from time import time
+from time import sleep
 from datetime import date
 import os
 
@@ -17,6 +18,7 @@ from bottle import route
 from bottle import static_file
 
 from ditic_kanban.rt_summary import get_summary_info
+from ditic_kanban.rt_summary import generate_summary_file
 from ditic_kanban.config import DITICConfig
 from ditic_kanban.auth import UserAuth
 from ditic_kanban.tools import user_tickets_details
@@ -224,6 +226,20 @@ def ticket_action(ticket_id, action):
 def static(filepath):
     return static_file(filepath, root=STATIC_PATH)
 
+class MyThread (threading.Thread):
+    def __init__(self, delay):
+        threading.Thread.__init__(self)
+        self.delay = delay
+
+    def run(self):
+        while True:
+            if exitFlag:
+                self.exit()
+            sleep(self.delay)
+            generate_summary_file()
+            print("generating summary...")
+
 
 def start_server():
+    MyThread(20).start()
     run(server='paste', host='0.0.0.0', debug=True)
