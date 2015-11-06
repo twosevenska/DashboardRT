@@ -7,6 +7,7 @@ from time import time
 from time import sleep
 from datetime import date
 import os
+import threading
 
 from bottle import get
 from bottle import post
@@ -226,6 +227,7 @@ def ticket_action(ticket_id, action):
 def static(filepath):
     return static_file(filepath, root=STATIC_PATH)
 
+
 class MyThread (threading.Thread):
     def __init__(self, delay):
         threading.Thread.__init__(self)
@@ -233,13 +235,14 @@ class MyThread (threading.Thread):
 
     def run(self):
         while True:
-            if exitFlag:
-                self.exit()
+            # if exitFlag:
+                # self.exit()
             sleep(self.delay)
             generate_summary_file()
+            sleep(5)
             print("generating summary...")
 
 
 def start_server():
-    MyThread(20).start()
+    MyThread(10).start()
     run(server='paste', host='0.0.0.0', debug=True)
