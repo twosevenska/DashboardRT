@@ -40,7 +40,7 @@
         </td>
         <td align="center"><strong>STALLED</strong></td>
         <td align="center">
-            <strong>Ready to RT</strong><br>
+            <strong>Done</strong><br>
             % status = 'rejected'
             % if status in number_tickets_per_status:
                 <strong>{{number_tickets_per_status[status]}}</strong>
@@ -62,13 +62,16 @@
             % for ticket in tickets[status][priority]:
             &nbsp;&nbsp;
             % if ticket['kanban_actions']['back']:
-            <a href="/ticket/{{ticket['id']}}/action/back?o={{username_id}}&email={{email}}">&lt;</a>
+
+                <button onclick="backButton({{ticket['id']}})">&lt;</button>
+
+
             % end
             % if ticket['kanban_actions']['interrupted']:
-            <a href="/ticket/{{ticket['id']}}/action/interrupted?o={{username_id}}&email={{email}}">/</a>
+            <button onclick="interruptedButton({{ticket['id']}});">/</button>
             % end
             % if ticket['kanban_actions']['increase_priority']:
-            <a href="/ticket/{{ticket['id']}}/action/increase_priority?o={{username_id}}&email={{email}}">^</a>
+            <button onclick="increasePriorityButton({{ticket['id']}})">^</button>
             % end
             <a title="#{{ticket['id']}}
 
@@ -77,7 +80,7 @@ Status: {{ticket['status']}}
 TimeWorked: {{ticket['timeworked']}}
 
 Requestor: {{ticket['requestors']}}
-Subject: {{ticket['subject']}}" href="http://domo-kun.noip.me/rt/Ticket/Display.html?id={{ticket['id']}}">
+Subject: {{ticket['subject']}}" href="https://suporte.uc.pt/Ticket/Display.html?id={{ticket['id']}}">
                 {{ticket['id']}}
                 % subject = ticket['subject']
                 % if len(ticket['subject']) > max_len:
@@ -86,13 +89,13 @@ Subject: {{ticket['subject']}}" href="http://domo-kun.noip.me/rt/Ticket/Display.
                 {{subject}}
             </a>
             % if ticket['kanban_actions']['decrease_priority']:
-            <a href="/ticket/{{ticket['id']}}/action/decrease_priority?o={{username_id}}&email={{email}}">v</a>
+            <button onclick="decreasePriorityButton({{ticket['id']}})">v</button>
             % end
             % if ticket['kanban_actions']['stalled']:
-            <a href="/ticket/{{ticket['id']}}/action/stalled?o={{username_id}}&email={{email}}">\</a>
+            <button onclick="stalledButton({{ticket['id']}})">\</button>
             % end
             % if ticket['kanban_actions']['forward']:
-            <a href="/ticket/{{ticket['id']}}/action/forward?o={{username_id}}&email={{email}}">&gt;</a>
+            <button onclick="forwardButton({{ticket['id']}})">&gt;</button>
             % end
             <br>
             % end
@@ -105,3 +108,28 @@ Subject: {{ticket['subject']}}" href="http://domo-kun.noip.me/rt/Ticket/Display.
 <p>
     Time to execute: {{time_spent}}
 </p>
+
+<script>
+
+    function backButton(id){
+        window.location.replace('/ticket/'+id+'/action/back?o={{username_id}}&email={{email}}');
+    }
+    function interruptedButton(id){
+        window.location.replace('/ticket/'+id+'/action/interrupted?o={{username_id}}&email={{email}}');
+    }
+    function increasePriorityButton(id){
+        window.location.replace('/ticket/'+id+'/action/increase_priority?o={{username_id}}&email={{email}}');
+    }
+    function decreasePriorityButton(id){
+        window.location.replace('/ticket/'+id+'/action/decrease_priority?o={{username_id}}&email={{email}}');
+    }
+    function stalledButton(id){
+        window.location.replace('/ticket/'+id+'/action/stalled?o={{username_id}}&email={{email}}');
+    }
+    function forwardButton(id){
+        window.location.replace('/ticket/'+id+'/action/forward?o={{username_id}}&email={{email}}');
+    }
+
+</script>
+
+
