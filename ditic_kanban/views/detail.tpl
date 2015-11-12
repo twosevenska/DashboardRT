@@ -62,13 +62,13 @@
             % for ticket in tickets[status][priority]:
             &nbsp;&nbsp;
             % if ticket['kanban_actions']['back']:
-            <button onclick="actionButton({{ticket['id']}}, back)">&lt;</button>
+            <button onclick="actionButton({{ticket['id']}}, 'back')">&lt;</button>
             % end
             % if ticket['kanban_actions']['interrupted']:
-            <button onclick="actionButton({{ticket['id']}}, interrupted);">/</button>
+            <button onclick="actionButton({{ticket['id']}}, 'interrupted');">/</button>
             % end
             % if ticket['kanban_actions']['increase_priority']:
-            <button onclick="actionButton({{ticket['id']}}, increase_priority)">^</button>
+            <button onclick="actionButton({{ticket['id']}}, 'increase_priority')">^</button>
             % end
             <a title="#{{ticket['id']}}
 
@@ -86,13 +86,13 @@ Subject: {{ticket['subject']}}" href="https://suporte.uc.pt/Ticket/Display.html?
                 {{subject}}
             </a>
             % if ticket['kanban_actions']['decrease_priority']:
-            <button onclick="actionButton({{ticket['id']}}, decrease_priority)">v</button>
+            <button onclick="actionButton({{ticket['id']}}, 'decrease_priority')">v</button>
             % end
             % if ticket['kanban_actions']['stalled']:
-            <button onclick="actionButton({{ticket['id']}}, stalled)">\</button>
+            <button onclick="actionButton({{ticket['id']}}, 'stalled')">\</button>
             % end
             % if ticket['kanban_actions']['forward']:
-            <button onclick="actionButton({{ticket['id']}}, {{ticket['status']}}, forward)">&gt;</button>
+            <button onclick="actionButton({{ticket['id']}}, 'forward', '{{ticket['status']}}')">&gt;</button>
             % end
             <br>
             % end
@@ -110,21 +110,21 @@ Subject: {{ticket['subject']}}" href="https://suporte.uc.pt/Ticket/Display.html?
 
 <script>
 
-    function actionButton(ticketId, action){
+    function actionButton(ticketId, action, ticketStatus){
         var request = new XMLHttpRequest();
-        request.onload = function(){}
+        request.onload = function(){window.location.reload();}
 
-        if(action===back){
+        if(action==='back'){
             strReq = backButton(ticketId);
-        }else if(action===interrupted){
+        }else if(action==='interrupted'){
             strReq = interruptedButton(ticketId);
-        }else if(action===increase_priority){
+        }else if(action==='increase_priority'){
             strReq = increasePriorityButton(ticketId);
-        }else if(action===decrease_priority){
+        }else if(action==='decrease_priority'){
             strReq = decreasePriorityButton(ticketId);
-        }else if(action===stalled){
+        }else if(action==='stalled'){
             strReq = stalledButton(ticketId);
-        }else if(action===forward){
+        }else if(action==='forward'){
             strReq = forwardButton(ticketId, ticketStatus);
         }
         if (strReq != null) {
@@ -132,7 +132,6 @@ Subject: {{ticket['subject']}}" href="https://suporte.uc.pt/Ticket/Display.html?
         }
         request.open("GET", strReq, true);
         request.send();
-        window.location.reload();
     }
 
     function backButton(ticketId){
@@ -151,8 +150,9 @@ Subject: {{ticket['subject']}}" href="https://suporte.uc.pt/Ticket/Display.html?
         return '/ticket/'+ticketId+'/action/stalled?o={{username_id}}&email={{email}}';
     }
     function forwardButton(ticketId, ticketStatus){
-        if(ticketStatus===open){
-            return '/ticket/'+ticketId+'/action/forward-'+prompt("Enter conclusion condition:", "")'?o={{username_id}}&email={{email}}';
+
+        if(ticketStatus==='open'){
+            return '/ticket/'+ticketId+'/action/forward-'+prompt("Enter conclusion condition:", "")+'?o={{username_id}}&email={{email}}';
         }else{
             return '/ticket/'+ticketId+'/action/forward?o={{username_id}}&email={{email}}';
         }
