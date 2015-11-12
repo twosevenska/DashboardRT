@@ -62,16 +62,13 @@
             % for ticket in tickets[status][priority]:
             &nbsp;&nbsp;
             % if ticket['kanban_actions']['back']:
-
-                <button onclick="backButton({{ticket['id']}})">&lt;</button>
-
-
+            <button onclick="actionButton({{ticket['id']}}, back)">&lt;</button>
             % end
             % if ticket['kanban_actions']['interrupted']:
-            <button onclick="interruptedButton({{ticket['id']}});">/</button>
+            <button onclick="actionButton({{ticket['id']}}, interrupted);">/</button>
             % end
             % if ticket['kanban_actions']['increase_priority']:
-            <button onclick="increasePriorityButton({{ticket['id']}})">^</button>
+            <button onclick="actionButton({{ticket['id']}}, increase_priority)">^</button>
             % end
             <a title="#{{ticket['id']}}
 
@@ -89,13 +86,13 @@ Subject: {{ticket['subject']}}" href="https://suporte.uc.pt/Ticket/Display.html?
                 {{subject}}
             </a>
             % if ticket['kanban_actions']['decrease_priority']:
-            <button onclick="decreasePriorityButton({{ticket['id']}})">v</button>
+            <button onclick="actionButton({{ticket['id']}}, decrease_priority)">v</button>
             % end
             % if ticket['kanban_actions']['stalled']:
-            <button onclick="stalledButton({{ticket['id']}})">\</button>
+            <button onclick="actionButton({{ticket['id']}}, stalled)">\</button>
             % end
             % if ticket['kanban_actions']['forward']:
-            <button onclick="forwardButton({{ticket['id']}})">&gt;</button>
+            <button onclick="actionButton({{ticket['id']}}, {{ticket['status']}}, forward)">&gt;</button>
             % end
             <br>
             % end
@@ -109,25 +106,56 @@ Subject: {{ticket['subject']}}" href="https://suporte.uc.pt/Ticket/Display.html?
     Time to execute: {{time_spent}}
 </p>
 
+<p id="demo"></p>
+
 <script>
 
-    function backButton(id){
-        window.location.replace('/ticket/'+id+'/action/back?o={{username_id}}&email={{email}}');
+    function actionButton(ticketId, action){
+        var request = new XMLHttpRequest();
+        request.onload = function(){}
+
+        if(action===back){
+            strReq = backButton(ticketId);
+        }else if(action===interrupted){
+            strReq = interruptedButton(ticketId);
+        }else if(action===increase_priority){
+            strReq = increasePriorityButton(ticketId);
+        }else if(action===decrease_priority){
+            strReq = decreasePriorityButton(ticketId);
+        }else if(action===stalled){
+            strReq = stalledButton(ticketId);
+        }else if(action===forward){
+            strReq = forwardButton(ticketId, ticketStatus);
+        }
+        if (strReq != null) {
+            document.getElementById("demo").innerHTML = "strReq:"+strReq;
+        }
+        request.open("GET", strReq, true);
+        request.send();
+        window.location.reload();
     }
-    function interruptedButton(id){
-        window.location.replace('/ticket/'+id+'/action/interrupted?o={{username_id}}&email={{email}}');
+
+    function backButton(ticketId){
+        return '/ticket/'+ticketId+'/action/back?o={{username_id}}&email={{email}}';
     }
-    function increasePriorityButton(id){
-        window.location.replace('/ticket/'+id+'/action/increase_priority?o={{username_id}}&email={{email}}');
+    function interruptedButton(ticketId){
+        return '/ticket/'+ticketId+'/action/interrupted?o={{username_id}}&email={{email}}';
     }
-    function decreasePriorityButton(id){
-        window.location.replace('/ticket/'+id+'/action/decrease_priority?o={{username_id}}&email={{email}}');
+    function increasePriorityButton(ticketId){
+        return '/ticket/'+ticketId+'/action/increase_priority?o={{username_id}}&email={{email}}';
     }
-    function stalledButton(id){
-        window.location.replace('/ticket/'+id+'/action/stalled?o={{username_id}}&email={{email}}');
+    function decreasePriorityButton(ticketId){
+        return '/ticket/'+ticketId+'/action/decrease_priority?o={{username_id}}&email={{email}}';
     }
-    function forwardButton(id){
-        window.location.replace('/ticket/'+id+'/action/forward?o={{username_id}}&email={{email}}');
+    function stalledButton(ticketId){
+        return '/ticket/'+ticketId+'/action/stalled?o={{username_id}}&email={{email}}';
+    }
+    function forwardButton(ticketId, ticketStatus){
+        if(ticketStatus===open){
+            return '/ticket/'+ticketId+'/action/forward-'+prompt("Enter conclusion condition:", "")'?o={{username_id}}&email={{email}}';
+        }else{
+            return '/ticket/'+ticketId+'/action/forward?o={{username_id}}&email={{email}}';
+        }
     }
 
 </script>

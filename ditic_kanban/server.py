@@ -238,6 +238,7 @@ def static(filepath):
 class summaryGenerator(threading.Thread):
     def __init__(self, delay):
         threading.Thread.__init__(self)
+        self.setDaemon(True)
         self.delay = delay
 
     def run(self):
