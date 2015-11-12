@@ -287,7 +287,7 @@ def ticket_actions(rt_object, ticket_id, action, ticket_email, user_email):
                     'timeworked': calculate_time_worked(ticket_line) + ' minutes',
                     'starts': '0',
                     'status': 'resolved',
-                    'subject': get_ticket_object_subject(rt_object)+" - "+action_and_message[1],
+                    'subject': ticket_line['subject']+"-"+action_and_message[1],
                 }
             )
 
@@ -361,10 +361,6 @@ def get_ticket_action_and_message(action):
     except IndexError:
         pass
     return result
-
-
-def get_ticket_object_subject(ticket):
-    return ticket.get('subject')
 
 # noinspection PyArgumentList
 def user_closed_tickets(rt_object, email):
