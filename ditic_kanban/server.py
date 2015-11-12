@@ -18,8 +18,9 @@ from bottle import redirect
 from bottle import route
 from bottle import static_file
 
-from ditic_kanban.rt_summary import get_summary_info
+from ditic_kanban.statistics import stats_update_json_file
 from ditic_kanban.rt_summary import generate_summary_file
+from ditic_kanban.rt_summary import get_summary_info
 from ditic_kanban.config import DITICConfig
 from ditic_kanban.auth import UserAuth
 from ditic_kanban.tools import user_tickets_details
@@ -45,6 +46,12 @@ rt_object = RTApi(system['server'], system['username'], system['password'])
 STATIC_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), "../static"))
 print STATIC_PATH
 
+# This variable set a the period between
+# which the summaries are generated, in seconds
+DELAY_BETWEEN_SUMMARIES = 60
+# This flag is to stop the summary generation
+exitFlag = False
+
 
 def create_default_result():
     # Default header configuration
@@ -68,10 +75,10 @@ def get_root():
 
     result = create_default_result()
     # Removed to be a display at the TV
-    #if request.query.o == '' or not user_auth.check_id(request.query.o):
+    # if request.query.o == '' or not user_auth.check_id(request.query.o):
     #    result.update({'message': ''})
     #    return template('auth', result)
-    #result.update({'username': user_auth.get_email_from_id(request.query.o)})
+    # result.update({'username': user_auth.get_email_from_id(request.query.o)})
     result.update({'username_id': request.query.o})
     today = date.today().isoformat()
     result.update({'statistics': get_statistics(get_date(30, today), today)})
@@ -228,9 +235,10 @@ def static(filepath):
     return static_file(filepath, root=STATIC_PATH)
 
 
-class MyThread (threading.Thread):
+class summaryGenerator(threading.Thread):
     def __init__(self, delay):
         threading.Thread.__init__(self)
+        self.setDaemon(True)
         self.delay = delay
 
     def run(self):
@@ -238,11 +246,13 @@ class MyThread (threading.Thread):
             # if exitFlag:
                 # self.exit()
             sleep(self.delay)
+
             generate_summary_file()
-            sleep(5)
+            sleep(self.delay)
+            stats_update_json_file()
             print("generating summary...")
 
 
 def start_server():
-    MyThread(10).start()
+    summaryGenerator(5).start()
     run(server='paste', host='0.0.0.0', debug=True)

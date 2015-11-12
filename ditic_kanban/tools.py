@@ -188,6 +188,10 @@ def ticket_actions(rt_object, ticket_id, action, ticket_email, user_email):
     # There is so much to be done. So this is the default answer.
     result = 'Still working on it... sorry for the inconvenience!'
 
+    action_and_message = get_ticket_action_and_message(action)
+
+    action = action_and_message[0]
+
     # INCREASE PRIORITY ##############################
     if action == 'increase_priority':
         result = modify_ticket(
@@ -282,7 +286,8 @@ def ticket_actions(rt_object, ticket_id, action, ticket_email, user_email):
                 {
                     'timeworked': calculate_time_worked(ticket_line) + ' minutes',
                     'starts': '0',
-                    'status': 'rejected',
+                    'status': 'resolved',
+                    'subject': ticket_line['subject']+"-"+action_and_message[1],
                 }
             )
 
@@ -348,6 +353,14 @@ def ticket_actions(rt_object, ticket_id, action, ticket_email, user_email):
         'action_result': result
     }
 
+
+def get_ticket_action_and_message(action):
+    result = action.split("-")
+    try:
+        result[1] = result[1].replace("_", " ")
+    except IndexError:
+        pass
+    return result
 
 # noinspection PyArgumentList
 def user_closed_tickets(rt_object, email):

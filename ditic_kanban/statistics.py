@@ -117,11 +117,11 @@ def stats_mean_time(start_date, final_date):
 
     :param start_date: start date (YYYY-MM-DD)
     :param final_date: end date (YYYY-MM-DD)
-    :return: integer number of minutes to solve the ticket
+    :return: float number of minutes to solve the ticket
     """
     # noinspection PyArgumentList
     result = mktime(strptime(final_date)) - mktime(strptime(start_date))
-    result /= 60
+    result /= 60.0
 
     # If results are higher than 1 month of work, then forget it!
     # ( 60 minutes * 24 hours a day * 30 days = 43 200 minutes)

@@ -60,7 +60,7 @@ class RTApi:
             return [i.decode('utf-8').strip().lower() for i in response]
         except urllib2.URLError:
             # Could not contact server!
-            raise ValueError('Not able to contact server.')
+            raise ValueError('Not able to contact server!')
 
 
 def get_list_of_tickets(rt_object, query, detail=True):
@@ -131,6 +131,35 @@ def get_list_of_tickets(rt_object, query, detail=True):
 
     return result
 
+def get_list_of_users(rt_object, detail=True):
+    """
+    Get a full list of all tickets, and its information, based on the query.
+
+    The query should be a string with the RT4 syntax for querying the DB
+    Example of query could be:
+        '(Owner="vapi@uc.pt" OR Owner="asantos@uc.pt") AND Status != "Resolved" AND Status != "Rejected"'
+
+    The result of this query will be a list with the following format:
+        [
+            [ <ticketID>,
+                {
+                    <field>: <value>,
+                    ...
+                }
+            ],
+            ...
+        ]
+
+    The param detail will define if we want detailed information in the response. By default is yes
+
+    :param query: a string with the query
+    :param detail: a boolean. True if we want detailed answer (default). False otherwise.
+    :return: a list
+    """
+
+    response = rt_object.get_data_from_rest('/user/')
+
+    return response
 
 def modify_ticket(rt_object, ticket_id, new_values):
     """
