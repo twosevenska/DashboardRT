@@ -77,7 +77,7 @@ Status: {{ticket['status']}}
 TimeWorked: {{ticket['timeworked']}}
 
 Requestor: {{ticket['requestors']}}
-Subject: {{ticket['subject']}}" href="http://domo-kun.noip.me/rt/Ticket/Display.html?id={{ticket['id']}}">
+Subject: {{ticket['subject']}}" href="https://suporte.uc.pt/Ticket/Display.html?id={{ticket['id']}}">
                 {{ticket['id']}}
                 % subject = ticket['subject']
                 % if len(ticket['subject']) > max_len:
@@ -150,9 +150,10 @@ Subject: {{ticket['subject']}}" href="http://domo-kun.noip.me/rt/Ticket/Display.
         return '/ticket/'+ticketId+'/action/stalled?o={{username_id}}&email={{email}}';
     }
     function forwardButton(ticketId, ticketStatus){
-
         if(ticketStatus==='open'){
-            return '/ticket/'+ticketId+'/action/forward-'+prompt("Enter conclusion condition:", "").split(' ').join('_')+'?o={{username_id}}&email={{email}}';
+            str = prompt("Enter conclusion condition:", "");
+            while(str.length < 4){str = prompt("Enter conclusion condition:", "It is needed at least 4 characters.");}
+            return '/ticket/'+ticketId+'/action/forward-'+str.split(' ').join('_')+'?o={{username_id}}&email={{email}}';
         }else{
             return '/ticket/'+ticketId+'/action/forward?o={{username_id}}&email={{email}}';
         }
