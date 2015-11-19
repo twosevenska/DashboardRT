@@ -14,6 +14,7 @@ from datetime import timedelta
 from ditic_kanban.config import DITICConfig
 from ditic_kanban.rt_api import get_list_of_tickets
 from ditic_kanban.rt_api import modify_ticket
+from ditic_kanban.rt_api import create_new_ticket
 from ditic_kanban.kanban_logic import create_ticket_possible_actions
 
 
@@ -94,8 +95,9 @@ def user_tickets_details(rt_object, email):
         raise ValueError('Unknown email/user:'+email)
 
     # Ok, if we got here, then the user exist
+    # Status != "resolved" AND
     else:
-        query += 'AND  ( Status != "resolved" AND Status != "deleted" )'
+        query += 'AND  (  Status != "deleted" )'
 
     # Get the information from the server.
     try:
@@ -256,7 +258,7 @@ def ticket_actions(rt_object, ticket_id, action, ticket_email, user_email):
                 ticket_id,
                 {
                     'starts': ctime(time()),
-                    'status': 'open',
+                    'status': 'new',
                 }
             )
 
@@ -287,7 +289,7 @@ def ticket_actions(rt_object, ticket_id, action, ticket_email, user_email):
                     'timeworked': calculate_time_worked(ticket_line) + ' minutes',
                     'starts': '0',
                     'status': 'resolved',
-                    'subject': ticket_line['subject']+"-"+action_and_message[1],
+                    'text': ticket_line['text']+"\n\n\n_______________________\n"+action_and_message[1],
                 }
             )
 
@@ -354,6 +356,34 @@ def ticket_actions(rt_object, ticket_id, action, ticket_email, user_email):
     }
 
 
+def create_ticket(rt_object, subject, text, user_email):
+
+    result = create_new_ticket(
+        rt_object,
+        {
+            'Queue': 'general',
+            'Requestor': user_email,
+            'Subject': subject,
+            'Cc': '',
+            'AdminCc': '',
+            'Owner': 'nobody',
+            'Status': 'new',
+            'Priority': '25',
+            'InitialPriority': '25',
+            'FinalPriority': '',
+            'TimeEstimated': '',
+            'Starts': '',
+            'Due': '',
+            'Text': text,
+            'cf.{is - informatica e sistemas}': 'dir'
+        }
+    )
+
+    return {
+        'action_result': result
+    }
+
+
 def get_ticket_action_and_message(action):
     result = action.split("-")
     try:
@@ -361,6 +391,7 @@ def get_ticket_action_and_message(action):
     except IndexError:
         pass
     return result
+
 
 # noinspection PyArgumentList
 def user_closed_tickets(rt_object, email):
