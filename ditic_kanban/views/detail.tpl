@@ -83,7 +83,7 @@ Text: <input id="text" type="text" placeholder="My text1">
                 TimeWorked: {{ticket['timeworked']}}
 
                 Requestor: {{ticket['requestors']}}
-                Subject: {{ticket['subject']}}" href="https://suporte.uc.pt/Ticket/Display.html?id={{ticket['id']}}">
+                Subject: {{ticket['subject']}}" href="http://domo-kun.noip.me/rt/Ticket/Display.html?id={{ticket['id']}}">
                 {{ticket['id']}}
                 % subject = ticket['subject']
                 % if len(ticket['subject']) > max_len:
