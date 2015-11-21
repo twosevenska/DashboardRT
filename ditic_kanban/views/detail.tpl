@@ -82,13 +82,12 @@ Text: <input id="text" type="text" placeholder="My text1">
             <button onclick="actionButton({{ticket['id']}}, 'increase_priority')">^</button>
             % end
             <a title="#{{ticket['id']}}
-
                 Owner: {{ticket['owner']}}
                 Status: {{ticket['status']}}
                 TimeWorked: {{ticket['timeworked']}}
 
                 Requestor: {{ticket['requestors']}}
-                Subject: {{ticket['subject']}}" href="https://suporte.uc.pt/Ticket/Display.html?id={{ticket['id']}}">
+                Subject: {{ticket['subject']}}" href="http://domo-kun.noip.me/rt/t/Ticket/Display.html?id={{ticket['id']}}">
                 {{ticket['id']}}
                 % subject = ticket['subject']
                 % if len(ticket['subject']) > max_len:
