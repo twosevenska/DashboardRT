@@ -2,6 +2,14 @@
     Search: <input name="search" type="search">
 </form>
 
+<p>
+<b>Create quick ticket:</b>
+</br>
+Subject: <input id="sub" type="text" placeholder="My sub1">
+Text: <input id="text" type="text" placeholder="My text1">
+<button onclick="createButton()">create</button>
+</p>
+
 % include('summary')
 % max_len = 30
 
@@ -17,6 +25,7 @@
 % end
 
 <table border="1" width="100%">
+	<tbody>
     <tr>
         <td align="center">
             <strong>IN</strong><br>
@@ -38,10 +47,10 @@
                 (max: {{email_limit[status]}})
             % end
         </td>
-        <td align="center"><strong>STALLED</strong></td>
+
         <td align="center">
-            <strong>Done</strong><br>
-            % status = 'rejected'
+            <strong>DONE</strong><br>
+            % status = 'resolved'
             % if status in number_tickets_per_status:
                 <strong>{{number_tickets_per_status[status]}}</strong>
             % end
@@ -50,12 +59,14 @@
             % end
         </td>
     </tr>
+
     <tr>
-        % for status in ['new', 'open', 'stalled', 'rejected']:
+        % for status in ['new', 'open', 'resolved']:
         %   if status not in tickets.keys():
         <td></td>
         %       continue
         %   end
+        <div align="center" style="background-color: red;">
         <td valign="top">
         %   for priority in sorted(tickets[status], reverse=True):
             {{priority}}<br>
@@ -72,12 +83,12 @@
             % end
             <a title="#{{ticket['id']}}
 
-Owner: {{ticket['owner']}}
-Status: {{ticket['status']}}
-TimeWorked: {{ticket['timeworked']}}
+                Owner: {{ticket['owner']}}
+                Status: {{ticket['status']}}
+                TimeWorked: {{ticket['timeworked']}}
 
-Requestor: {{ticket['requestors']}}
-Subject: {{ticket['subject']}}" href="https://suporte.uc.pt/Ticket/Display.html?id={{ticket['id']}}">
+                Requestor: {{ticket['requestors']}}
+                Subject: {{ticket['subject']}}" href="https://suporte.uc.pt/Ticket/Display.html?id={{ticket['id']}}">
                 {{ticket['id']}}
                 % subject = ticket['subject']
                 % if len(ticket['subject']) > max_len:
@@ -99,7 +110,74 @@ Subject: {{ticket['subject']}}" href="https://suporte.uc.pt/Ticket/Display.html?
         %   end
         </td>
         % end
+        </div>
     </tr>
+    <tr>
+        <td align="center">
+            <strong>Stalled</strong><br>
+            % status = 'stalled'
+            % if status in number_tickets_per_status:
+                <strong>{{number_tickets_per_status[status]}}</strong>
+            % end
+            % if status in email_limit:
+                (max: {{email_limit[status]}})
+            % end
+        </td>
+    </tr>
+    <tr>
+        % for status in ['stalled']:
+
+        %   if status not in tickets.keys():
+        <td></td>
+        %       continue
+        %   end
+        <div align="center" style="background-color: red;">
+        <td valign="top">
+        %   for priority in sorted(tickets[status], reverse=True):
+            {{priority}}<br>
+            % for ticket in tickets[status][priority]:
+            &nbsp;&nbsp;
+            % if ticket['kanban_actions']['back']:
+            <button onclick="actionButton({{ticket['id']}}, 'back')">&lt;</button>
+            % end
+            % if ticket['kanban_actions']['interrupted']:
+            <button onclick="actionButton({{ticket['id']}}, 'interrupted');">/</button>
+            % end
+            % if ticket['kanban_actions']['increase_priority']:
+            <button onclick="actionButton({{ticket['id']}}, 'increase_priority')">^</button>
+            % end
+            <a title="#{{ticket['id']}}
+
+                Owner: {{ticket['owner']}}
+                Status: {{ticket['status']}}
+                TimeWorked: {{ticket['timeworked']}}
+
+                Requestor: {{ticket['requestors']}}
+                Subject: {{ticket['subject']}}" href="https://suporte.uc.pt/Ticket/Display.html?id={{ticket['id']}}">
+                {{ticket['id']}}
+                % subject = ticket['subject']
+                % if len(ticket['subject']) > max_len:
+                %   subject = ticket['subject'][:max_len]+'...'
+                % end
+                {{subject}}
+            </a>
+            % if ticket['kanban_actions']['decrease_priority']:
+            <button onclick="actionButton({{ticket['id']}}, 'decrease_priority')">v</button>
+            % end
+            % if ticket['kanban_actions']['stalled']:
+            <button onclick="actionButton({{ticket['id']}}, 'stalled')">\</button>
+            % end
+            % if ticket['kanban_actions']['forward']:
+            <button onclick="actionButton({{ticket['id']}}, 'forward', '{{ticket['status']}}')">&gt;</button>
+            % end
+            <br>
+            % end
+        %   end
+        </td>
+        % end
+        </div>
+    </tr>
+	</tbody>
 </table>
 
 <p>
@@ -112,7 +190,7 @@ Subject: {{ticket['subject']}}" href="https://suporte.uc.pt/Ticket/Display.html?
 
     function actionButton(ticketId, action, ticketStatus){
         var request = new XMLHttpRequest();
-        request.onload = function(){window.location.reload();}
+        request.onload = function(){window.location.reload()}
 
         if(action==='back'){
             strReq = backButton(ticketId);
@@ -159,6 +237,12 @@ Subject: {{ticket['subject']}}" href="https://suporte.uc.pt/Ticket/Display.html?
         }
     }
 
+    function createButton(){
+        var request = new XMLHttpRequest();
+        request.onload = function(){window.location.reload()}
+        request.open("POST",'/ticket?o={{username_id}}&email={{email}}',true);
+        request.send(document.getElementById('sub').value + '\n' + document.getElementById('text').value);
+    }
 </script>
 
 

@@ -93,7 +93,6 @@ def get_list_of_tickets(rt_object, query, detail=True):
         data_dict.update({'format': 'l'})
     response = rt_object.get_data_from_rest('/search/ticket', data_dict)
     result = []
-
     # In this section, we must transform the result from server into the format
     # this function is supposed to return
     for line in response:
@@ -131,6 +130,7 @@ def get_list_of_tickets(rt_object, query, detail=True):
 
     return result
 
+
 def get_list_of_users(rt_object, detail=True):
     """
     Get a full list of all tickets, and its information, based on the query.
@@ -161,6 +161,7 @@ def get_list_of_users(rt_object, detail=True):
 
     return response
 
+
 def modify_ticket(rt_object, ticket_id, new_values):
     """
     Modify ticket attributes. The first variable is the ticket ID to be changed. The second variable will be
@@ -179,6 +180,29 @@ def modify_ticket(rt_object, ticket_id, new_values):
     data = {'content': content}
 
     # Modify the ticket
+    try:
+        return rt_object.get_data_from_rest(uri, data)
+    except ValueError as e:
+        raise ValueError(e)
+
+
+def create_new_ticket(rt_object, new_values):
+    """
+    Creates ticket.The first variable will be a dictionary with
+    a combination of new attributes.
+
+    ::param new_values: a dictionary with a relation attribute and its new value. Example: { 'Status': 'new', ... }
+    :return: Operation result
+    """
+    content = ''
+    for key in new_values:
+        content += key + ': ' + new_values[key] + '\n'
+
+    # Information required for RT query
+    uri = 'ticket/new'
+    data = {'content': content}
+
+    # Create the ticket
     try:
         return rt_object.get_data_from_rest(uri, data)
     except ValueError as e:

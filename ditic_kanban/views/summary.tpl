@@ -36,7 +36,7 @@
                     URGENT<br>
                     <br>
                     % for ticket_info in urgent:
-                        <a href="http://domo-kun.noip.me/rt/Ticket/Display.html?id={{ticket_info['id']}}">
+                        <a href="https://suporte.uc.pt/Ticket/Display.html?id={{ticket_info['id']}}">
                             {{ticket_info['subject']}}
                         </a>
                         % if username:
@@ -56,7 +56,6 @@
                     <td align="center">IN</td>
                     <td align="center">ACTIVE</td>
                     <td align="center">STALLED</td>
-                    <td align="center">R2RT</td>
                     <td align="center">DONE</td>
                 </tr>
                 % for email in sorted(summary):
@@ -69,7 +68,7 @@
                 %   end
                 <tr>
                     <td><a href="/detail/{{email}}?o={{username_id}}">{{user}}</a></td>
-                    %   for status in ['new', 'open', 'stalled', 'rejected', 'resolved']:
+                    %   for status in ['new', 'open', 'stalled', 'resolved']:
                     <td>{{summary[email][status]}}</td>
                     % end
                 </tr>
