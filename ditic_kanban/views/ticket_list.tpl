@@ -30,66 +30,62 @@
                     <td>
                         &nbsp;&nbsp;
                         % if ticket['kanban_actions']['back']:
-                        <a href="/ticket/{{ticket['id']}}/action/back?o={{username_id}}&email={{email}}">&lt;</a>
-                        % end
-                        % if ticket['kanban_actions']['interrupted']:
-                        <a href="/ticket/{{ticket['id']}}/action/interrupted?o={{username_id}}&email={{email}}">/</a>
-                        % end
-                        % if ticket['kanban_actions']['increase_priority']:
-                        <a href="/ticket/{{ticket['id']}}/action/increase_priority?o={{username_id}}&email={{email}}">^</a>
-                        % end
+						<button onclick="actionButton({{ticket['id']}}, 'back')">&lt;</button>
+						% end
+						% if ticket['kanban_actions']['interrupted']:
+						<button onclick="actionButton({{ticket['id']}}, 'interrupted');">/</button>
+						% end
+						% if ticket['kanban_actions']['increase_priority']:
+						<button onclick="actionButton({{ticket['id']}}, 'increase_priority')">^</button>
+						% end
                     </td>
                     <td>
-                        <a href="http://domo-kun.noip.me/rt/Ticket/Display.html?id={{ticket['id']}}">
+						<a href="http://domo-kun.noip.me/rt/Ticket/Display.html?id={{ticket['id']}}">
                             {{ticket['id']}}
-                        </a>
+						</a>
                     </td>
                     <td>
-                        <a href="http://domo-kun.noip.me/rt/Ticket/Display.html?id={{ticket['id']}}">
-                            {{ticket['status']}}
-                        </a>
+						{{ticket['status']}}
                     </td>
                     <td>
-                        <a href="http://domo-kun.noip.me/rt/Ticket/Display.html?id={{ticket['id']}}">
-                            {{ticket['cf.{servico}']}}
-                        </a>
+						{{ticket['cf.{servico}']}}
                     </td>
                     <td>
-                        <a href="http://domo-kun.noip.me/rt/Ticket/Display.html?id={{ticket['id']}}">
-                            {{ticket['requestors']}}
-                        </a>
+						%if len(ticket['requestors']) > 0:
+							{{ticket['requestors']}}
+						%else:
+							no req
+						%end
                     </td>
                     <td>
-                        <a href="http://domo-kun.noip.me/rt/Ticket/Display.html?id={{ticket['id']}}">
                             % subject = ticket['subject']
                             % if len(ticket['subject']) > max_len:
                             %   subject = ticket['subject'][:max_len]+'...'
                             % end
                             {{subject}}
-                        </a>
+                        
                     </td>
                     <td>
-                        <a href="http://domo-kun.noip.me/rt/Ticket/Display.html?id={{ticket['id']}}">
                             Created: {{ticket['created']}}<br>
                             Last Update: {{ticket['lastupdated']}}
-                        </a>
+                        
                     </td>
                     <td>
-                        % if ticket['kanban_actions']['decrease_priority']:
-                        <a href="/ticket/{{ticket['id']}}/action/decrease_priority?o={{username_id}}&email={{email}}">v</a>
-                        % end
-                        % if ticket['kanban_actions']['stalled']:
-                        <a href="/ticket/{{ticket['id']}}/action/stalled?o={{username_id}}&email={{email}}">\</a>
-                        % end
-                        % if ticket['kanban_actions']['forward']:
-                        <a href="/ticket/{{ticket['id']}}/action/forward?o={{username_id}}&email={{email}}">&gt;</a>
-                        % end
+                         % if ticket['kanban_actions']['decrease_priority']:
+							<button onclick="actionButton({{ticket['id']}}, 'decrease_priority')">v</button>
+						% end
+						% if ticket['kanban_actions']['stalled']:
+							<button onclick="actionButton({{ticket['id']}}, 'stalled')">\</button>
+						% end
+						% if ticket['kanban_actions']['forward']:
+							<button onclick="actionButton({{ticket['id']}}, 'forward', '{{ticket['status']}}')">&gt;</button>
+						% end
                         % if email == 'dir-inbox':
-                        <a href="/ticket/{{ticket['id']}}/action/take?o={{username_id}}&email={{email}}">(take)</a>
+							<button onclick="actionButton({{ticket['id']}}, 'take')">Take</button>
                         %   if ticket.get('cf.{ditic-urgent}', ''):
-                        <a href="/ticket/{{ticket['id']}}/action/unset_urgent?o={{username_id}}&email={{email}}" title="Make ticket not urgent">(Not Urg.)</a>
+							<button onclick="actionButton({{ticket['id']}}, 'unsetUrgent')" title="Make ticket not urgent">Not Urgent</button>
                         %   else:
-                        <a href="/ticket/{{ticket['id']}}/action/set_urgent?o={{username_id}}&email={{email}}" title="Make ticket URGENT">(Urg.)</a>
+							<button onclick="actionButton({{ticket['id']}}, 'setUrgent')" title="Make ticket Urgent">Urgent</button>
                         %   end
                         % end
                     </td>
@@ -104,3 +100,70 @@
 <p>
     Time to execute: {{time_spent}}
 </p>
+<p id="demo"></p>
+<script>
+	function actionButton(ticketId, action, ticketStatus){
+        var request = new XMLHttpRequest();
+        request.onload = function(){window.location.reload()}
+
+        if(action==='back'){
+            strReq = backButton(ticketId);
+        }else if(action==='interrupted'){
+            strReq = interruptedButton(ticketId);
+        }else if(action==='increase_priority'){
+            strReq = increasePriorityButton(ticketId);
+        }else if(action==='decrease_priority'){
+            strReq = decreasePriorityButton(ticketId);
+        }else if(action==='stalled'){
+            strReq = stalledButton(ticketId);
+        }else if(action==='forward'){
+            strReq = forwardButton(ticketId, ticketStatus);
+        }else if(action==='take'){
+            strReq = takeButton(ticketId, ticketStatus);
+        }else if(action==='setUrgent'){
+            strReq = setUrgentButton(ticketId, ticketStatus);
+        }else if(action==='unsetUrgent'){
+            strReq = unsetUrgentButton(ticketId, ticketStatus);
+        }
+		
+        if (strReq != null) {
+            document.getElementById("demo").innerHTML = "strReq:"+strReq;
+        }
+        request.open("GET", strReq, true);
+        request.send();
+    }
+
+    function backButton(ticketId){
+        return '/ticket/'+ticketId+'/action/back?o={{username_id}}&email={{email}}';
+    }
+    function interruptedButton(ticketId){
+        return '/ticket/'+ticketId+'/action/interrupted?o={{username_id}}&email={{email}}';
+    }
+    function increasePriorityButton(ticketId){
+        return '/ticket/'+ticketId+'/action/increase_priority?o={{username_id}}&email={{email}}';
+    }
+    function decreasePriorityButton(ticketId){
+        return '/ticket/'+ticketId+'/action/decrease_priority?o={{username_id}}&email={{email}}';
+    }
+    function stalledButton(ticketId){
+        return '/ticket/'+ticketId+'/action/stalled?o={{username_id}}&email={{email}}';
+    }
+    function forwardButton(ticketId, ticketStatus){
+        if(ticketStatus==='open'){
+            str = prompt("Enter conclusion condition:", "");
+            while(str.length < 4){str = prompt("Enter conclusion condition:", "It is needed at least 4 characters.");}
+            return '/ticket/'+ticketId+'/action/forward-'+str.split(' ').join('_')+'?o={{username_id}}&email={{email}}';
+        }else{
+            return '/ticket/'+ticketId+'/action/forward?o={{username_id}}&email={{email}}';
+        }
+    }
+	function takeButton(ticketId){
+        return '/ticket/'+ticketId+'/action/take?o={{username_id}}&email={{email}}';
+    }
+	function unsetUrgentButton(ticketId){
+        return '/ticket/'+ticketId+'/action/unset_urgent?o={{username_id}}&email={{email}}';
+    }
+	function setUrgentButton(ticketId){
+        return '/ticket/'+ticketId+'/action/set_urgent?o={{username_id}}&email={{email}}';
+    }
+</script>

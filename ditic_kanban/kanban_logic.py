@@ -55,7 +55,6 @@ def create_ticket_possible_actions(config, ticket, email, number_tickets_per_sta
                 actions['forward'] = True
         else:
             actions['forward'] = True
-
     # Here we will analyze the condition of ACTIVE (open)
     elif ticket['status'] == 'open':
         actions['stalled'] = True
@@ -85,7 +84,7 @@ def create_ticket_possible_actions(config, ticket, email, number_tickets_per_sta
         actions['decrease_priority'] = True
 
         # Can we move back?
-        status = 'open'
+        status = 'new'
         if status in email_limit and status in number_tickets_per_status:
             if number_tickets_per_status[status] < email_limit[status]:
                 actions['back'] = True

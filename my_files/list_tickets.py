@@ -10,9 +10,13 @@ system = myconfig.get_system()
 email_rt_api = RTApi(system['server'], system['username'], system['password'])
 
 #query = 'Owner = "vapi@uc.pt" and Status = "rejected"'
-query = '"cf.{is - informatica e sistemas}" not like "dir" and "cf.{is - informatica e sistemas}" not like "dir-inbox"'
+query = '"cf.{is - informatica e sistemas}" like "dir" and "cf.{is - informatica e sistemas}" not like "dir-inbox"'
 
-response = get_list_of_tickets(email_rt_api, query)
+response = myconfig.check_if_user_exist(system['username'])
+print "%s\n" % str(response)
 
-print response
+response = get_list_of_user(email_rt_api, query)
+for k in response:
+    print k
+
 print len(response)
