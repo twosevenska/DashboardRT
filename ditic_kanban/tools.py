@@ -289,7 +289,7 @@ def ticket_actions(rt_object, ticket_id, action, ticket_email, user_email):
                     'timeworked': calculate_time_worked(ticket_line) + ' minutes',
                     'starts': '0',
                     'status': 'resolved',
-                    'subject': ticket_line['subject']+"-"+action_and_message[1]
+                    'text': ticket_line['text']+"\n\n\n_______________________\n"+action_and_message[1],
                 }
             )
 
@@ -331,7 +331,7 @@ def ticket_actions(rt_object, ticket_id, action, ticket_email, user_email):
             rt_object,
             ticket_id,
             {
-                '	': '',
+                'cf.{DITIC-Urgent}': '',
             }
         )
 
