@@ -36,7 +36,7 @@
                     URGENT<br>
                     <br>
                     % for ticket_info in urgent:
-                        <a href="https://suporte.uc.pt/Ticket/Display.html?id={{ticket_info['id']}}">
+                        <a href="http://domo-kun.noip.me/rt/Ticket/Display.html?id={{ticket_info['id']}}">
                             {{ticket_info['subject']}}
                         </a>
                         % if username:

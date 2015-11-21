@@ -40,7 +40,7 @@
 						% end
                     </td>
                     <td>
-						<a href="https://suporte.uc.pt/Ticket/Display.html?id={{ticket['id']}}">
+						<a href="http://domo-kun.noip.me/rt/Ticket/Display.html?id={{ticket['id']}}">
                             {{ticket['id']}}
 						</a>
                     </td>
