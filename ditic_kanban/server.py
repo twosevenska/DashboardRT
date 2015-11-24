@@ -269,6 +269,11 @@ def new_ticket():
         return template('detail', result)
 
 
+@get('/ticket/<id:int>')
+def get_ticket_details():
+  pass
+
+
 @route("/static/<filepath:path>", name="static")
 def static(filepath):
     return static_file(filepath, root=STATIC_PATH)
