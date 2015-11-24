@@ -244,3 +244,27 @@ def get_ticket_links(rt_object, ticket_id):
             continue
 
     return result
+
+def fetch_ticket_details(rt_object, ticket_id):
+  response = rt_object.get_data_from_rest('/ticket/%s' % ticket_id, {})
+
+  attributes_to_read = ['Queue', 'Owner', 'Subject', 'Priority', 'Requestors', 'Created', 'Started', 'Resolved', 'LastUpdated', 'TimeWorked']
+
+  result = {}
+
+  for line in response :
+    print('line=' + str(line))
+    for attribute in attributes_to_read :
+      print('attribte=' + str(attribute))
+      if _has_key(attribute, line) :
+        result.update({attribute: _extract_value(attribute, line)})
+
+  return result
+
+
+def _has_key(key, key_value):
+  return key_value.strip().startsWith(key.strip() + ':')
+
+def _extract_value(key, key_value):
+  return key_value[(len(key)+1):].strip()
+

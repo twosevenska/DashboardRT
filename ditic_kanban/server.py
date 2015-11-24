@@ -30,6 +30,7 @@ from ditic_kanban.tools import search_tickets
 from ditic_kanban.tools import get_urgent_tickets
 from ditic_kanban.tools import create_ticket
 from ditic_kanban.rt_api import RTApi
+from ditic_kanban.rt_api import fetch_ticket_details
 from ditic_kanban.statistics import get_date
 from ditic_kanban.statistics import get_statistics
 
@@ -269,9 +270,28 @@ def new_ticket():
         return template('detail', result)
 
 
-@get('/ticket/<id:int>')
-def get_ticket_details():
-  pass
+@get('/ticket/<ticket_id:int>')
+def get_ticket_details(ticket_id):
+  start_time = time()
+
+  result = {'title': 'Ticket details'}
+
+  if request.query.o == '' or not user_auth.check_id(request.query.o):
+      result.update({'message': ''})
+      return template('auth', result)
+
+  result.update({'username': user_auth.get_email_from_id(request.query.o)})
+  result.update({'username_id': request.query.o})
+
+  result.update({'ticket_id': ticket_id})
+
+  rt_api = user_auth.get_rt_object_from_email(user_auth.get_email_from_id(request.query.o))
+  res = fetch_ticket_details(rt_api, ticket_id)
+  print(str(res))
+
+  result.update({'time_spent': '%0.2f seconds' % (time() - start_time)})
+
+  return template('ticket_detail', result)
 
 
 @route("/static/<filepath:path>", name="static")
