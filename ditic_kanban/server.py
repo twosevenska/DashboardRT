@@ -272,26 +272,26 @@ def new_ticket():
 
 @get('/ticket/<ticket_id:int>')
 def get_ticket_details(ticket_id):
-  start_time = time()
+    start_time = time()
 
-  result = {'title': 'Ticket details'}
+    result = {'title': 'Ticket details'}
 
-  if request.query.o == '' or not user_auth.check_id(request.query.o):
-      result.update({'message': ''})
-      return template('auth', result)
+    if request.query.o == '' or not user_auth.check_id(request.query.o):
+        result.update({'message': ''})
+        return template('auth', result)
 
-  result.update({'username': user_auth.get_email_from_id(request.query.o)})
-  result.update({'username_id': request.query.o})
+    result.update({'username': user_auth.get_email_from_id(request.query.o)})
+    result.update({'username_id': request.query.o})
 
-  result.update({'ticket_id': ticket_id})
+    result.update({'ticket_id': ticket_id})
 
-  rt_api = user_auth.get_rt_object_from_email(user_auth.get_email_from_id(request.query.o))
-  res = fetch_ticket_details(rt_api, ticket_id)
-  print(str(res))
+    rt_api = user_auth.get_rt_object_from_email(user_auth.get_email_from_id(request.query.o))
+    res = fetch_ticket_details(rt_api, ticket_id)
+    print(str(res))
 
-  result.update({'time_spent': '%0.2f seconds' % (time() - start_time)})
+    result.update({'time_spent': '%0.2f seconds' % (time() - start_time)})
 
-  return template('ticket_detail', result)
+    return template('ticket_details', result)
 
 
 @route("/static/<filepath:path>", name="static")

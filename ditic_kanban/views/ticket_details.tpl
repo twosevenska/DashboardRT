@@ -4,7 +4,7 @@
 <p>
     % username = get('username', '')
     % if username:
-    <strong>Authenticated as: {(username)}</strong>
+    <strong>Authenticated as: {{username}}</strong>
     % end
 </p>
 

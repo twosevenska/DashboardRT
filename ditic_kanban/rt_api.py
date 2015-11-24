@@ -246,25 +246,62 @@ def get_ticket_links(rt_object, ticket_id):
     return result
 
 def fetch_ticket_details(rt_object, ticket_id):
-  response = rt_object.get_data_from_rest('/ticket/%s' % ticket_id, {})
+    """
+    Fetches the details of a particular ticket.
 
-  attributes_to_read = ['Queue', 'Owner', 'Subject', 'Priority', 'Requestors', 'Created', 'Started', 'Resolved', 'LastUpdated', 'TimeWorked']
+    :param rt_object: a non-null RTApi.
+    :param ticket_id: an integer.
+    :return: A non-null dictionary.
+    """
 
-  result = {}
+    response = rt_object.get_data_from_rest('/ticket/{id}'.format(id=ticket_id), {})
 
-  for line in response :
-    print('line=' + str(line))
-    for attribute in attributes_to_read :
-      print('attribte=' + str(attribute))
-      if _has_key(attribute, line) :
-        result.update({attribute: _extract_value(attribute, line)})
+    result = {} # We start with an empty dictionary.
 
-  return result
+    # The response's body should contain several lines with the format
+    # <attribute>:<value>. We add a pair to the resulting dictionary as we find them.
+    for line in response :
+        attribute = _extract_attribute(line)
+        value = _extract_value(line)
+        if attribute is not None and value is not None:
+            result.update({attribute: value})
+
+    return result
 
 
-def _has_key(key, key_value):
-  return key_value.strip().startsWith(key.strip() + ':')
+def _extract_attribute(line):
+    """
+    Given a string with the format <attribute>:<value>, this function extracts
+    the <attribute> and strips it from spaces.
 
-def _extract_value(key, key_value):
-  return key_value[(len(key)+1):].strip()
+    For example, given the string '  foo: bar  ', this function return 'foo'.
+
+    If the string does not contain a colon, then None is returned.
+
+    :param line: a non-null string
+    :return: a string, or None
+    """
+
+    try:
+        return line[ : line.index(':')].strip()
+    except ValueError, e:
+        return None
+
+def _extract_value(line):
+    """
+    Given a string with the format <attribute>:<value>, this function extracts
+    the <value> and strips it from spaces.
+
+    For example, given the string '  foo: bar  ', this function return 'bar'.
+
+    If the string does not contain a colon, then None is returned.
+
+    :param line: a non-null string
+    :return: a string, or None
+    """
+
+    try:
+        return line[(line.index(':') + 1) : ].strip()
+    except ValueError, e:
+        return None
 
