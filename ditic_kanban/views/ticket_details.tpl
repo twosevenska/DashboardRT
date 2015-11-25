@@ -51,6 +51,12 @@
 <b>Servico:</b> {{servico}}<br>
 
 
+<h2>History</h2>
+% for item in history :
+<a href="/ticket/{{ticket_id}}/history/{{item[0]}}">{{item[1]}}</a><br>
+% end
+
+
 <p>Time to execute: {{time_spent}}</p>
 
 <script>

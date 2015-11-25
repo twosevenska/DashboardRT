@@ -269,6 +269,30 @@ def fetch_ticket_details(rt_object, ticket_id):
     return result
 
 
+def fetch_ticket_brief_history(rt_object, ticket_id):
+    """
+    Fetches the history, with a brief format, of a particular ticket.
+
+    :param rt_object: a non-null RTApi.
+    :param ticket_id: an integer.
+    :return: A non-null dictionary.
+    """
+
+    response = rt_object.get_data_from_rest('/ticket/{id}/history'.format(id=ticket_id), {})
+
+    result = [] # We start with an empty dictionary.
+
+    # The response's body should contain several lines with the format
+    # <attribute>:<value>. We add a pair to the resulting dictionary as we find them.
+    for line in response :
+        attribute = _extract_attribute(line)
+        value = _extract_value(line)
+        if attribute is not None and value is not None:
+            result.append((int(attribute), value))
+
+    return sorted(result, reverse=True)
+
+
 def _extract_attribute(line):
     """
     Given a string with the format <attribute>:<value>, this function extracts

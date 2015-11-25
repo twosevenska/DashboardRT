@@ -32,6 +32,7 @@ from ditic_kanban.tools import get_urgent_tickets
 from ditic_kanban.tools import create_ticket
 from ditic_kanban.rt_api import RTApi
 from ditic_kanban.rt_api import fetch_ticket_details
+from ditic_kanban.rt_api import fetch_ticket_brief_history
 from ditic_kanban.statistics import get_date
 from ditic_kanban.statistics import get_statistics
 
@@ -292,6 +293,10 @@ def get_ticket_details(ticket_id):
     details = fetch_ticket_details(rt_api, ticket_id)
     pp.pprint(details)
     result.update(details)
+
+    history = fetch_ticket_brief_history(rt_api, ticket_id)
+    pp.pprint(history)
+    result.update({'history': history})
 
     result.update({'time_spent': '%0.2f seconds' % (time() - start_time)})
 
