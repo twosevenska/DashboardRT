@@ -37,6 +37,20 @@
 <b>Updated:</b> {{updated}}<br>
 % end
 
+<h2>Custom Fields</h2>
+% interrupted = get('cf.{ditic-interrupted}', '')
+<b>DITIC-interrupted:</b> {{interrupted}}<br>
+
+% urgent = get('cf.{ditic-urgent}', '')
+<b>DITIC-urgent:</b> {{urgent}}<br>
+
+% sistemas = get('cf.{is - informatica e sistemas}', '')
+<b>IS - Informatica e Sistemas:</b> {{sistemas}}<br>
+
+% servico = get('cf.{servico}', '')
+<b>Servico:</b> {{servico}}<br>
+
+
 <p>Time to execute: {{time_spent}}</p>
 
 <script>
