@@ -8,6 +8,7 @@ from time import sleep
 from datetime import date
 import os
 import threading
+import pprint
 
 from bottle import get
 from bottle import post
@@ -53,6 +54,8 @@ print STATIC_PATH
 DELAY_BETWEEN_SUMMARIES = 60
 # This flag is to stop the summary generation
 exitFlag = False
+
+pp = pprint.PrettyPrinter(indent=2)
 
 
 def create_default_result():
@@ -286,8 +289,9 @@ def get_ticket_details(ticket_id):
     result.update({'ticket_id': ticket_id})
 
     rt_api = user_auth.get_rt_object_from_email(user_auth.get_email_from_id(request.query.o))
-    res = fetch_ticket_details(rt_api, ticket_id)
-    print(str(res))
+    details = fetch_ticket_details(rt_api, ticket_id)
+    pp.pprint(details)
+    result.update(details)
 
     result.update({'time_spent': '%0.2f seconds' % (time() - start_time)})
 
