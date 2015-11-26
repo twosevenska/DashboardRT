@@ -53,7 +53,7 @@
 
 <h2>History</h2>
 % for item in history :
-<a href="/ticket/{{ticket_id}}/history/{{item[0]}}">{{item[1]}}</a><br>
+<a href="/ticket/{{ticket_id}}/history/{{item[0]}}?o={{username_id}}">{{item[1]}}</a><br>
 % end
 
 
