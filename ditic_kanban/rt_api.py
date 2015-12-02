@@ -244,3 +244,127 @@ def get_ticket_links(rt_object, ticket_id):
             continue
 
     return result
+
+def fetch_ticket_details(rt_object, ticket_id):
+    """
+    Fetches the details of a particular ticket.
+
+    :param rt_object: a non-null RTApi.
+    :param ticket_id: an integer.
+    :return: A non-null dictionary.
+    """
+
+    response = rt_object.get_data_from_rest('/ticket/{id}'.format(id=ticket_id), {})
+
+    result = {} # We start with an empty dictionary.
+
+    # The response's body should contain several lines with the format
+    # <attribute>:<value>. We add a pair to the resulting dictionary as we find them.
+    for line in response :
+        attribute = _extract_attribute(line)
+        value = _extract_value(line)
+        if attribute is not None and value is not None:
+            result.update({attribute: value})
+
+    return result
+
+
+def fetch_ticket_brief_history(rt_object, ticket_id):
+    """
+    Fetches the history, with a brief format, of a particular ticket.
+
+    :param rt_object: a non-null RTApi.
+    :param ticket_id: an integer.
+    :return: A non-null list.
+    """
+
+    response = rt_object.get_data_from_rest('/ticket/{id}/history'.format(id=ticket_id), {})
+
+    result = [] # We start with an empty dictionary.
+
+    # The response's body should contain several lines with the format
+    # <attribute>:<value>. We add a pair to the resulting list as we find them.
+    for line in response :
+        attribute = _extract_attribute(line)
+        value = _extract_value(line)
+        if attribute is not None and value is not None:
+            result.append((int(attribute), value))
+
+    return sorted(result, reverse=True) # Newer items appear first.
+
+
+def fetch_history_item(rt_object, ticket_id, item_id):
+    """
+    Fetches the details of a particular history item, fromm a particular ticket.
+
+    :param rt_object: a non-null RTApi.
+    :param ticket_id: an integer.
+    :param item_id: an integer.
+    :return: A non-null list.
+    """
+
+    response = rt_object.get_data_from_rest('/ticket/{tid}/history/id/{iid}'.format(tid=ticket_id, iid=item_id), {})
+
+    result = {} # We start with an empty dictionary.
+
+    content = []
+    parsing_content = False
+
+    # The response's body should contain several lines with the format
+    # <attribute>:<value>. We add a pair to the resulting list as we find them.
+    for line in response :
+        attribute = _extract_attribute(line)
+        value = _extract_value(line)
+
+        if parsing_content and attribute is None and value is None:
+            content.append(line)
+
+        if attribute is not None and value is not None:
+            if attribute == 'content' :
+                parsing_content = True
+                content.append(value)
+            else:
+                parsing_content = False
+                result.update({attribute: value})
+
+    result.update({'content': ''.join(content)})
+
+    return result
+
+
+def _extract_attribute(line):
+    """
+    Given a string with the format <attribute>:<value>, this function extracts
+    the <attribute> and strips it from spaces.
+
+    For example, given the string '  foo: bar  ', this function return 'foo'.
+
+    If the string does not contain a colon, then None is returned.
+
+    :param line: a non-null string
+    :return: a string, or None
+    """
+
+    try:
+        return line[ : line.index(':')].strip()
+    except ValueError, e:
+        return None
+
+def _extract_value(line):
+    """
+    Given a string with the format <attribute>:<value>, this function extracts
+    the <value> and strips it from spaces.
+
+    For example, given the string '  foo: bar  ', this function return 'bar'.
+
+    If the string does not contain a colon, then None is returned.
+
+    :param line: a non-null string
+    :return: a string, or None
+    """
+
+    try:
+        return line[(line.index(':') + 1) : ].strip()
+    except ValueError, e:
+        return None
+

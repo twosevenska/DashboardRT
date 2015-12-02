@@ -16,7 +16,7 @@ source $VIRTUAL_ENV_DIR/bin/activate
 
 sudo -H pip install -e .
 
-cp -rf $TEMPLATES_DIR $SERVER_DIR
+sudo cp -rf $TEMPLATES_DIR $SERVER_DIR
 
 cd $SERVER_DIR
 ./ditic_kanban_server

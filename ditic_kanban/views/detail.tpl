@@ -87,7 +87,7 @@ Text: <input id="text" type="text" placeholder="My text1">
                 TimeWorked: {{ticket['timeworked']}}
 
                 Requestor: {{ticket['requestors']}}
-                Subject: {{ticket['subject']}}" href="http://domo-kun.noip.me/rt/t/Ticket/Display.html?id={{ticket['id']}}">
+                Subject: {{ticket['subject']}}" href="/ticket/{{ticket['id']}}?o={{get('username_id', '')}}">
                 {{ticket['id']}}
                 % subject = ticket['subject']
                 % if len(ticket['subject']) > max_len:
@@ -152,7 +152,7 @@ Text: <input id="text" type="text" placeholder="My text1">
                 TimeWorked: {{ticket['timeworked']}}
 
                 Requestor: {{ticket['requestors']}}
-                Subject: {{ticket['subject']}}" href="http://domo-kun.noip.me/rt/Ticket/Display.html?id={{ticket['id']}}">
+                Subject: {{ticket['subject']}}" href="/ticket/{{ticket['id']}}?o={{get('username_id', '')}}">
                 {{ticket['id']}}
                 % subject = ticket['subject']
                 % if len(ticket['subject']) > max_len:

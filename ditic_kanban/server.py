@@ -8,6 +8,7 @@ from time import sleep
 from datetime import date
 import os
 import threading
+import pprint
 
 from bottle import get
 from bottle import post
@@ -30,6 +31,9 @@ from ditic_kanban.tools import search_tickets
 from ditic_kanban.tools import get_urgent_tickets
 from ditic_kanban.tools import create_ticket
 from ditic_kanban.rt_api import RTApi
+from ditic_kanban.rt_api import fetch_ticket_details
+from ditic_kanban.rt_api import fetch_ticket_brief_history
+from ditic_kanban.rt_api import fetch_history_item
 from ditic_kanban.statistics import get_date
 from ditic_kanban.statistics import get_statistics
 
@@ -52,6 +56,8 @@ print STATIC_PATH
 DELAY_BETWEEN_SUMMARIES = 60
 # This flag is to stop the summary generation
 exitFlag = False
+
+pp = pprint.PrettyPrinter(indent=2)
 
 
 def create_default_result():
@@ -267,6 +273,61 @@ def new_ticket():
         return template('ticket_list', result)
     else:
         return template('detail', result)
+
+
+@get('/ticket/<ticket_id:int>')
+def get_ticket_details(ticket_id):
+    start_time = time()
+
+    result = {'title': 'Ticket details'}
+
+    if request.query.o == '' or not user_auth.check_id(request.query.o):
+        result.update({'message': ''})
+        return template('auth', result)
+
+    result.update({'username': user_auth.get_email_from_id(request.query.o)})
+    result.update({'username_id': request.query.o})
+
+    result.update({'ticket_id': ticket_id})
+
+    rt_api = user_auth.get_rt_object_from_email(user_auth.get_email_from_id(request.query.o))
+    details = fetch_ticket_details(rt_api, ticket_id)
+    pp.pprint(details)
+    result.update(details)
+
+    history = fetch_ticket_brief_history(rt_api, ticket_id)
+    pp.pprint(history)
+    result.update({'history': history})
+
+    result.update({'time_spent': '%0.2f seconds' % (time() - start_time)})
+
+    return template('ticket_details', result)
+
+
+@get('/ticket/<ticket_id:int>/history/<item_id:int>')
+def get_history_item_details(ticket_id, item_id):
+    start_time = time()
+
+    result = {'title': 'Ticket #{tid}, history item #{iid}'.format(tid=ticket_id, iid=item_id)}
+
+    if request.query.o == '' or not user_auth.check_id(request.query.o):
+        result.update({'message': ''})
+        return template('auth', result)
+
+    result.update({'username': user_auth.get_email_from_id(request.query.o)})
+    result.update({'username_id': request.query.o})
+
+    result.update({'ticket_id': ticket_id})
+    result.update({'item_id': item_id})
+
+    rt_api = user_auth.get_rt_object_from_email(user_auth.get_email_from_id(request.query.o))
+    details = fetch_history_item(rt_api, ticket_id, item_id)
+    pp.pprint(details)
+    result.update(details)
+
+    result.update({'time_spent': '%0.2f seconds' % (time() - start_time)})
+
+    return template('history_item_details', result)
 
 
 @route("/static/<filepath:path>", name="static")
