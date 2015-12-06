@@ -165,7 +165,7 @@ def get_list_of_users(rt_object, detail=True):
 def modify_ticket(rt_object, ticket_id, new_values):
     """
     Modify ticket attributes. The first variable is the ticket ID to be changed. The second variable will be
-    a dictionary with a combination of attribute and its new value
+    a dictionary with a combination of attribute and its new value.
 
     :param ticket_id: the ticket ID (a string with the ticket number)
     :param new_values: a dictionary with a relation attribute and its new value. Example: { 'Status': 'new', ... }
@@ -186,23 +186,23 @@ def modify_ticket(rt_object, ticket_id, new_values):
         raise ValueError(e)
 
 def comment_ticket(rt_object, ticket_id, comment_values):
-    """
+	"""
     Adds a comment to the ticket. The first variable is the ticket ID to be changed. The second variable will be
-    a string containing the body of the comment to add to the ticket
+    a string containing the body of the comment to add to the ticket.
 
     :param ticket_id: the ticket ID (a string with the ticket number)
     :param comment: a string with the comment to add to the ticket
     :return: Operation result
     """
     content = ''
-    for key in comment_values:
-        content += key + ': ' + comment_values[key] + '\n'
+    for key in new_values:
+        content += key + ': ' + new_values[key] + '\n'
 
     # Information required for RT query
     uri = 'ticket/' + str(ticket_id) + '/comment'
     data = {'content': content}
 
-    # Comment the ticket
+    # Modify the ticket
     try:
         return rt_object.get_data_from_rest(uri, data)
     except ValueError as e:

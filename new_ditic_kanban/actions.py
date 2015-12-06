@@ -6,13 +6,11 @@
 #
 
 
-from ditic_kanban.tools import *
-from ditic_kanban.auth import UserAuth
-from ditic_kanban.config import DITICConfig
-from ditic_kanban.rt_api import RTApi
+from new_ditic_kanban.tools import *
+from new_ditic_kanban.auth import UserAuth
+from new_ditic_kanban.config import DITICConfig
+from new_ditic_kanban.rt_api import RTApi
 
-
-import new_server
 
 from bottle import put
 from bottle import get
@@ -49,18 +47,29 @@ def on_action_backward(ticket_id):
         request.query.email, user_auth.get_email_from_id(o)
     )
 	
+@put('/action/forward/<ticket_id:int>')
+def on_action_forward(ticket_id):
+	print("forward:"+str(ticket_id))
+	ticket_actions(
+        user_auth.get_rt_object_from_email(
+            user_auth.get_email_from_id(o)
+        ),
+        ticket_id,
+        'forward',
+        request.query.email, user_auth.get_email_from_id(o)
+    )
 	
 @put('/action/interrupted/<ticket_id:int>')
 def on_action_interrupted(ticket_id):
 	print("interrupted:"+str(ticket_id))
 	ticket_actions(
         user_auth.get_rt_object_from_email(
-            user_auth.get_email_from_id(request.query.o)
+            user_auth.get_email_from_id(o)
         ),
         ticket_id,
         'interrupted',
         request.query.email,
-		user_auth.get_email_from_id(request.query.o)
+		user_auth.get_email_from_id(o)
     )
 
 @put('/action/priority/increase/<ticket_id:int>')
@@ -68,12 +77,12 @@ def on_action_increase_priority(ticket_id):
 	print("increase_priority:"+str(ticket_id))
 	ticket_actions(
         user_auth.get_rt_object_from_email(
-            user_auth.get_email_from_id(request.query.o)
+            user_auth.get_email_from_id(o)
         ),
         ticket_id,
         'increase_priority',
         request.query.email,
-		user_auth.get_email_from_id(request.query.o)
+		user_auth.get_email_from_id(o)
     )
 	
 @put('/action/priority/decrease/<ticket_id:int>')
@@ -81,12 +90,12 @@ def on_action_decrese_priority(ticket_id):
 	print("decrese_priority:"+str(ticket_id))
 	ticket_actions(
         user_auth.get_rt_object_from_email(
-            user_auth.get_email_from_id(request.query.o)
+            user_auth.get_email_from_id(o)
         ),
         ticket_id,
         'decrease_priority',
         request.query.email,
-		user_auth.get_email_from_id(request.query.o)
+		user_auth.get_email_from_id(o)
     )
 
 @put('/action/stalled/<ticket_id:int>')
@@ -94,24 +103,10 @@ def on_action_stalled(ticket_id):
 	print("stalled:"+str(ticket_id))
 	ticket_actions(
         user_auth.get_rt_object_from_email(
-            user_auth.get_email_from_id(request.query.o)
+            user_auth.get_email_from_id(o)
         ),
         ticket_id,
         'stalled',
         request.query.email,
-		user_auth.get_email_from_id(request.query.o)
+		user_auth.get_email_from_id(o)
     )
-
-@put('/action/forward/<ticket_id:int>')
-def on_action_forward(ticket_id):
-	print("forward:"+str(ticket_id))
-	ticket_actions(
-        user_auth.get_rt_object_from_email(
-            user_auth.get_email_from_id(request.query.o)
-        ),
-        ticket_id,
-        'forward',
-        request.query.email,
-		user_auth.get_email_from_id(request.query.o)
-    )
-	

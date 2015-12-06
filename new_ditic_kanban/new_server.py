@@ -15,8 +15,8 @@ from bottle import redirect
 from bottle import route
 from bottle import static_file
 
-from ditic_kanban.config import DITICConfig
-from ditic_kanban.rt_api import RTApi
+from new_ditic_kanban.config import DITICConfig
+from new_ditic_kanban.rt_api import RTApi
 
 
 def start_server():
