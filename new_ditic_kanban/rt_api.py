@@ -4,6 +4,7 @@
 # By Pedro Vapi @2015
 # This package will create an interface with RT4, using its REST API
 #
+
 import cookielib
 import urllib
 import urllib2
@@ -186,7 +187,7 @@ def modify_ticket(rt_object, ticket_id, new_values):
         raise ValueError(e)
 
 def comment_ticket(rt_object, ticket_id, comment_values):
-	"""
+    """
     Adds a comment to the ticket. The first variable is the ticket ID to be changed. The second variable will be
     a string containing the body of the comment to add to the ticket.
 

@@ -11,11 +11,11 @@ from time import strptime
 from datetime import date
 from datetime import timedelta
 
-from ditic_kanban.config import DITICConfig
-from ditic_kanban.rt_api import get_list_of_tickets
-from ditic_kanban.rt_api import modify_ticket
-from ditic_kanban.rt_api import create_new_ticket
-from ditic_kanban.kanban_logic import create_ticket_possible_actions
+from new_ditic_kanban.config import DITICConfig
+from new_ditic_kanban.rt_api import get_list_of_tickets
+from new_ditic_kanban.rt_api import modify_ticket
+from new_ditic_kanban.rt_api import create_new_ticket
+from new_ditic_kanban.kanban_logic import create_ticket_possible_actions
 
 
 def group_result_by(data, order_by):
