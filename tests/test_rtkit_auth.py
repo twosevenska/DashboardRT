@@ -26,6 +26,19 @@ except RTResourceError as e:
     logger.error(e.response.status)
     logger.error(e.response.parsed)
 
+print 'Real and valid login but ticket does not exist'
+
+try:
+    response = resource.get(path='ticket/1324231423543253245235432')
+    statusCode['Missing'] = response.status_int
+    for r in response.parsed:
+        for t in r:
+            logger.info(t)
+except RTResourceError as e:
+    logger.error(e.response.status_int)
+    logger.error(e.response.status)
+    logger.error(e.response.parsed)
+
 wrongUserResource = RTResource('http://'+host+'/REST/1.0/', 'INVALID', 'dsafdsf', CookieAuthenticator)
 
 print 'Fake user login'
@@ -59,6 +72,11 @@ except RTResourceError as e:
 print 'Login status code for each situation:'
 print statusCode
 
+# 200 means everything is ok
+# 401 means that login went wrong
+# 404 means that the ticket does not exist
+
 assert statusCode['Real'] == 200
+assert statusCode['Missing'] == 404
 assert statusCode['Fake User'] == 401
 assert statusCode['Wrong Pass'] == 401
