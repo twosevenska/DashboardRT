@@ -58,3 +58,7 @@ except RTResourceError as e:
 
 print 'Login status code for each situation:'
 print statusCode
+
+assert statusCode['Real'] == 200
+assert statusCode['Fake User'] == 401
+assert statusCode['Wrong Pass'] == 401
