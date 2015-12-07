@@ -9,6 +9,7 @@ from datetime import date
 import os
 import threading
 import pprint
+import json
 
 from bottle import get
 from bottle import post
@@ -302,6 +303,35 @@ def get_ticket_details(ticket_id):
     result.update({'time_spent': '%0.2f seconds' % (time() - start_time)})
 
     return template('ticket_details', result)
+
+
+@get('/ticket/<ticket_id:int>/json')
+def get_ticket_details_json(ticket_id):
+    start_time = time()
+
+    result = {'title': 'Ticket details'}
+
+    if request.query.o == '' or not user_auth.check_id(request.query.o):
+        result.update({'message': ''})
+        return template('auth', result)
+
+    result.update({'username': user_auth.get_email_from_id(request.query.o)})
+    result.update({'username_id': request.query.o})
+
+    result.update({'ticket_id': ticket_id})
+
+    rt_api = user_auth.get_rt_object_from_email(user_auth.get_email_from_id(request.query.o))
+    details = fetch_ticket_details(rt_api, ticket_id)
+    pp.pprint(details)
+    result.update(details)
+
+    history = fetch_ticket_brief_history(rt_api, ticket_id)
+    pp.pprint(history)
+    result.update({'history': history})
+
+    result.update({'time_spent': '%0.2f seconds' % (time() - start_time)})
+
+    return json.dumps(result)
 
 
 @get('/ticket/<ticket_id:int>/history/<item_id:int>')
