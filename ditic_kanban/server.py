@@ -37,9 +37,15 @@ from ditic_kanban.rt_api import fetch_history_item
 from ditic_kanban.statistics import get_date
 from ditic_kanban.statistics import get_statistics
 
+from rtkit.resource import RTResource
+from rtkit.authenticators import BasicAuthenticator
+from rtkit.errors import RTResourceError
+from rtkit import set_logging
+import logging
 
-# My first global variable...
-user_auth = UserAuth()
+
+# Old way of getting login
+# user_auth = UserAuth()
 
 # Only used by the URGENT tickets search
 my_config = DITICConfig()

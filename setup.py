@@ -10,7 +10,7 @@ setup(
     author_email='vapi@uc.pt',
     license='MIT',
     packages=['ditic_kanban'],
-    install_requires=['bottle', 'pytest', 'paste'],
+    install_requires=['bottle', 'pytest', 'paste', 'python-rtkit'],
     entry_points={
         'console_scripts': [
             'ditic_kanban_server = ditic_kanban.server:start_server',
