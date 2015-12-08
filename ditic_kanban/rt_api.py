@@ -73,6 +73,7 @@ def modify_ticket(resource, ticket_id, new_values):
     Modify ticket attributes. The first variable is the ticket ID to be changed. The second variable will be
     a dictionary with a combination of attribute and its new value
 
+    :param resource: RTResource for the call
     :param ticket_id: the ticket ID (a string with the ticket number)
     :param new_values: a dictionary with a relation attribute and its new value. Example: { 'Status': 'new', ... }
     :return: Operation result
@@ -81,6 +82,30 @@ def modify_ticket(resource, ticket_id, new_values):
     content = {'content': new_values}
 
     response = resource.post(path='ticket/'+ticket_id, payload=content)
+
+    if response.status_int == 200:
+        result = True
+
+    return result
+
+
+def add_ticket_comment(resource, ticket_id, comment):
+    #TODO: Integration test
+    """
+    Add a comment to a ticket. The first variable is the ticket ID. The second variable will be
+    a string with the comment text.
+
+    :param resource: RTResource for the call
+    :param ticket_id: the ticket ID (a string with the ticket number)
+    :param comment: a string with the comment text
+    :return: Operation result
+    """
+    result = False
+    content = {'content': {
+            'Action': 'comment',
+            'Text': comment, }}
+
+    response = resource.post(path='ticket/'+ticket_id+'/comment', payload=content)
 
     if response.status_int == 200:
         result = True
