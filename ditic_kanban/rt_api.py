@@ -64,6 +64,25 @@ def create_new_ticket(resource, new_values):
     if response.status_int == 200:
         result = True
 
-    return  result
+    return result
 
-def
+
+def modify_ticket(resource, ticket_id, new_values):
+    #TODO: Integration test
+    """
+    Modify ticket attributes. The first variable is the ticket ID to be changed. The second variable will be
+    a dictionary with a combination of attribute and its new value
+
+    :param ticket_id: the ticket ID (a string with the ticket number)
+    :param new_values: a dictionary with a relation attribute and its new value. Example: { 'Status': 'new', ... }
+    :return: Operation result
+    """
+    result = False
+    content = {'content': new_values}
+
+    response = resource.post(path='ticket/'+ticket_id, payload=content)
+
+    if response.status_int == 200:
+        result = True
+
+    return result
