@@ -12,9 +12,9 @@ from datetime import date
 from datetime import timedelta
 
 from ditic_kanban.config import DITICConfig
-from ditic_kanban.rt_api import get_list_of_tickets
-from ditic_kanban.rt_api import modify_ticket
-from ditic_kanban.rt_api import create_new_ticket
+from ditic_kanban.rt_api_old import get_list_of_tickets
+from ditic_kanban.rt_api_old import modify_ticket
+from ditic_kanban.rt_api_old import create_new_ticket
 from ditic_kanban.kanban_logic import create_ticket_possible_actions
 
 

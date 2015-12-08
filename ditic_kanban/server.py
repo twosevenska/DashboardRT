@@ -30,10 +30,10 @@ from ditic_kanban.tools import user_closed_tickets
 from ditic_kanban.tools import search_tickets
 from ditic_kanban.tools import get_urgent_tickets
 from ditic_kanban.tools import create_ticket
-from ditic_kanban.rt_api import RTApi
-from ditic_kanban.rt_api import fetch_ticket_details
-from ditic_kanban.rt_api import fetch_ticket_brief_history
-from ditic_kanban.rt_api import fetch_history_item
+from ditic_kanban.rt_api_old import RTApi
+from ditic_kanban.rt_api_old import fetch_ticket_details
+from ditic_kanban.rt_api_old import fetch_ticket_brief_history
+from ditic_kanban.rt_api_old import fetch_history_item
 from ditic_kanban.statistics import get_date
 from ditic_kanban.statistics import get_statistics
 

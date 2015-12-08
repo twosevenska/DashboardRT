@@ -7,7 +7,7 @@
 from random import randint
 
 from ditic_kanban.config import DITICConfig
-from ditic_kanban.rt_api import RTApi
+from ditic_kanban.rt_api_old import RTApi
 
 
 class UserAuth:

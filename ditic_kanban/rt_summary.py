@@ -12,8 +12,8 @@ from time import gmtime
 from json import dump
 from json import load
 
-from ditic_kanban.rt_api import RTApi
-from ditic_kanban.rt_api import get_list_of_tickets
+from ditic_kanban.rt_api_old import RTApi
+from ditic_kanban.rt_api_old import get_list_of_tickets
 from ditic_kanban.config import DITICConfig
 from ditic_kanban.tools import group_result_by
 

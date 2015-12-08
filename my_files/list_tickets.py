@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
 from ditic_kanban.config import DITICConfig
-from ditic_kanban.rt_api import get_list_of_tickets
-from ditic_kanban.rt_api import RTApi
+from ditic_kanban.rt_api_old import get_list_of_tickets
+from ditic_kanban.rt_api_old import RTApi
 
 myconfig = DITICConfig()
 system = myconfig.get_system()

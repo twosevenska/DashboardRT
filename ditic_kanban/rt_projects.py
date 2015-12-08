@@ -22,8 +22,8 @@
 from time import ctime
 from time import time
 
-from ditic_kanban.rt_api import get_ticket_links
-from ditic_kanban.rt_api import get_list_of_tickets
+from ditic_kanban.rt_api_old import get_ticket_links
+from ditic_kanban.rt_api_old import get_list_of_tickets
 
 
 class ProjectObject:

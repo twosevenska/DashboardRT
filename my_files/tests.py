@@ -2,7 +2,7 @@
 from pprint import pprint
 
 from ditic_kanban.config import DITICConfig
-from ditic_kanban.rt_api import RTApi
+from ditic_kanban.rt_api_old import RTApi
 #from ditic_kanban.statistics import stats_read_json_file
 #from ditic_kanban.statistics import get_statistics
 #from ditic_kanban.statistics import full_list_of_tickets_on_a_date
