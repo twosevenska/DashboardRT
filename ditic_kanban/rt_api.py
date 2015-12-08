@@ -112,9 +112,9 @@ def add_ticket_comment(resource, ticket_id, comment):
 
     return result
 
+
 def get_list_of_users(resource):
-    #TODO: Integration test
-    #TODO: Check for a more efficient way
+    #TODO: Integration test, Check for a more efficient way
     """
     Gets all tickets from the general queue and obtains the users
 
@@ -125,7 +125,7 @@ def get_list_of_users(resource):
     users = []
 
     query = "Queue='general'"
-    response = resource.get(path='search/ticket?query='+query)
+    response = perform_search(resource, query)
 
     for ticket in response.parsed[0]:
         ticketNumber = ticket[0]
@@ -137,3 +137,14 @@ def get_list_of_users(resource):
 
     return users
 
+
+def perform_search(resource, query):
+    #TODO: Integration test
+    """
+    Gets all tickets from the general queue and obtains the users
+
+    :param resource: RTResource for the call
+    :param query: String with the query for the search
+    :return: Operation result
+    """
+    return resource.get(path='search/ticket?query='+query)
