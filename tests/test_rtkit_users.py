@@ -13,7 +13,6 @@ resource = RTResource('http://'+host+'/REST/1.0/', usr, pwd, CookieAuthenticator
 users = []
 
 query = "Queue='general'"
-
 response = resource.get(path='search/ticket?query='+query)
 
 for ticket in response.parsed[0]:

@@ -111,3 +111,29 @@ def add_ticket_comment(resource, ticket_id, comment):
         result = True
 
     return result
+
+def get_list_of_users(resource):
+    #TODO: Integration test
+    #TODO: Check for a more efficient way
+    """
+    Gets all tickets from the general queue and obtains the users
+
+    :param resource: RTResource for the call
+    :return: Operation result
+    """
+
+    users = []
+
+    query = "Queue='general'"
+    response = resource.get(path='search/ticket?query='+query)
+
+    for ticket in response.parsed[0]:
+        ticketNumber = ticket[0]
+        ticketInfo = resource.get(path='ticket/'+ticketNumber)
+        owner = [item for item in ticketInfo.parsed[0] if item[0] == 'Owner']
+        user = owner[0][1]
+        if user not in users and user != 'Nobody':
+            users.append(user)
+
+    return users
+
