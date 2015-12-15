@@ -78,23 +78,25 @@ def create_default_result():
 
 @get('/')
 def get_root():
-    start_time = time()
+    # start_time = time()
 
-    result = create_default_result()
-    # Removed to be a display at the TV
-    # if request.query.o == '' or not user_auth.check_id(request.query.o):
-    #    result.update({'message': ''})
-    #    return template('auth', result)
-    # result.update({'username': user_auth.get_email_from_id(request.query.o)})
-    result.update({'username_id': request.query.o})
-    today = date.today().isoformat()
-    result.update({'statistics': get_statistics(get_date(30, today), today)})
+    # result = create_default_result()
+    # # Removed to be a display at the TV
+    # # if request.query.o == '' or not user_auth.check_id(request.query.o):
+    # #    result.update({'message': ''})
+    # #    return template('auth', result)
+    # # result.update({'username': user_auth.get_email_from_id(request.query.o)})
+    # result.update({'username_id': request.query.o})
+    # today = date.today().isoformat()
+    # result.update({'statistics': get_statistics(get_date(30, today), today)})
 
-    # Is there any URGENT ticket?
-    result.update({'urgent': get_urgent_tickets(rt_object)})
+    # # Is there any URGENT ticket?
+    # result.update({'urgent': get_urgent_tickets(rt_object)})
 
-    result.update({'time_spent': '%0.2f seconds' % (time() - start_time)})
-    return template('entrance_summary', result)
+    # result.update({'time_spent': '%0.2f seconds' % (time() - start_time)})
+    # return template('entrance_summary', result)
+
+    redirect('/static/index.html')
 
 
 @post('/auth')
