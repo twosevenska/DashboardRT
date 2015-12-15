@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Dashboard RT - Logic Box">
+    <meta name="author" content="Alexandre Vieira, André Martinez, Eduardo Pereira, Gloriya Gostyaeva, Gonçalo Barroso, Roberto Cunha">
+
+    <title>My Tickets</title>
+
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/bootstrap-theme.min.css" rel="stylesheet">
+    <link href="css/dashboard.css" rel="stylesheet">
+    <link href="css/sidebar.css" rel="stylesheet">
+
+    <script src="js/ie-emulation-modes-warning.js"></script>
+  </head>
+
+  <body>
+
+    <!-- 
+    FIXED NAVBAR
+    -->
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="navbar-collapse collapse">
+        <ul class="nav navbar-nav navbar-left">
+          <a class="navbar-brand" href="#">MAIN</a>
+          <a class="navbar-brand" id="tickets" href="#">MY TICKETS</a>
+        </ul>
+        <!-- ADMIN -->
+          <ul class="nav navbar-nav navbar-right">
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle m_right" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Admin<span class="caret"></span></a>
+              <ul class="dropdown-menu">
+                <li><a href="#">Profile</a></li>
+                <li><a href="#">Preferences</a></li>
+                <li><a href="#">Logout</a></li>
+                <li role="separator" class="divider"></li>
+                <li class="dropdown-header">Nav header</li>
+                <li><a href="#">Separated link</a></li>
+                <li><a href="#">One more separated link</a></li>
+              </ul>
+            </li>
+          </ul>
+          <!-- SEARCH -->
+          <form class="navbar-form navbar-right">
+            <input type="text" class="form-control" placeholder="Search...">
+            <button type="submit">Search</button>
+          </form>
+          <!-- NEW TICKET -->
+          <ul class="nav navbar-nav navbar-right">
+    <li class="dropdown">
+      <a href="#" class="dropdown-toggle m_right navbar-brand" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">New ticket <span class="caret"></span></a>
+      <ul class="dropdown-menu" style="width:250px">
+        <h4>Create quick ticket:</h4>
+        <ul>
+          <li style="float:right">Subject: <input id="sub" type="text" placeholder="Subject"></li>
+          <li style="float:right">Text: <input id="text" type="text" placeholder="Text here"></li>
+          <li style="margin-top:20px; float:center"><a href="#">Advanced Ticket Creation</a> <button type="submit">create</button></li>
+        </ul>
+        </li>
+      </ul>
+
+      </div>
+    </nav>
+
+
+    <!-- 
+    TABLES 
+    -->
+    <div class="jumbotron">
+      <div class="container">
+        <!-- Row for Titles -->
+        <div class="row col-md-6">
+          <h1>Nome do Ticket</h1>
+          <h2>Edit this Ticket</h2>
+        </div>
+      </div><!-- close container -->
+
+      <div class="container">
+        <!-- Row for ticket tables -->
+          <div class="row col-md-5" style="margin-top:30px">
+            <p>Requestors:</p><input type="text" class="form-control" placeholder="André">
+            <p>Cc:</p><input type="text" class="form-control" placeholder="">
+            <p>Admin Cc:</p><input type="text" class="form-control" placeholder="">
+            <p>Subject:</p><input type="text" class="form-control" placeholder="Cenas Derivadas">
+            <p>Description:</p><textarea name="texto" cols="74" rows="10" id="comments" placeholder="Cenas Derivadas são umas cenas bue interessante mas são chatas e tal."></textarea>
+            <p>Attach a File: <button type="submit">Browse</button> No file selected.</p>
+          </div><!-- row -->
+          <div class="col-md-2">
+            <!-- empty div to separate the columns -->
+          </div>
+
+          <div class="row col-md-5" style="margin-top:-33px">
+            <h2>Basic Information</h2>
+            <p>Queue:</p><input type="text" class="form-control" placeholder="General">
+            <p>Status:</p><input type="text" class="form-control" placeholder="New">
+            <p>Owner:</p><input type="text" class="form-control" placeholder="André">
+            <br>
+            <h2>Custom Fields</h2>
+            <p>Servico:</p><input type="text" class="form-control" placeholder="">
+            <p>IS - Informática e Sistemas:</p><input type="text" class="form-control" placeholder="DIR">
+         </div>
+
+        </div><!-- close container -->
+        <div class="container">
+          <br> 
+          <p><button type="submit">Save Changes</button></p>
+        </div>
+      </div><!-- jumbotron -->
+
+
+
+
+<!-- ____________________________________________________________________________________ -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/holder.min.js"></script>
+    <script src="js/ie10-viewport-bug-workaround.js"></script>
+  </body>
+</html>
