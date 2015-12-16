@@ -99,9 +99,22 @@ def get_root():
 
     user_id = request.get_cookie('account', secret='secret')
     if user_id :
+        redirect('/index')
+    else:
+        redirect('/login')
+
+
+@get('/login')
+def get_login():
+    return template('login', {})
+
+@get('/index')
+def get_index():
+    user_id = request.get_cookie('account', secret='secret')
+    if user_id :
         return template('index', {})
     else:
-        return template('login', {})
+        redirect('/login')
 
 
 @post('/auth')
@@ -134,24 +147,6 @@ def auth():
             response.status = 500
     else:
         response.status = 400
-
-    # result.update({'username': username, 'password': password})
-    # if username and password:
-    #     try:
-    #         if user_auth.check_password(username, password):
-    #             user_id = user_auth.get_email_id(username)
-    #             print('user_id=' + user_id)
-    #             response.set_cookie('account', user_id, secret='secret')
-    #             redirect('/')
-    #         else:
-    #             result.update({'message': 'Password incorrect'})
-    #             return template('auth', result)
-    #     except ValueError as e:
-    #         result.update({'message': str(e)})
-    #         return template('auth', result)
-    # else:
-    #     result.update({'message': 'Mandatory fields'})
-    #     return template('auth', result)
 
 
 @get('/detail/<email>')
