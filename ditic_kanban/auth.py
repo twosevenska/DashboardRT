@@ -80,7 +80,7 @@ class UserAuth:
         data_dict = {'query': 'Owner = "%s" and Status = "new"' % email}
         response = email_rt_api.get_data_from_rest('/search/ticket', data_dict)
         if 'your username or password is incorrect' in response:
-            raise ValueError('Password is incorrect')
+            return False
 
         self.ids[self.__get_new_id()] = {
             'email': email,
