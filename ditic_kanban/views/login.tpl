@@ -65,11 +65,10 @@
                 data: JSON.stringify(data),
                 contentType: "application/json",
                 complete: function (data, textStatus) {
-                    console.log("complete.testStatus=" + textStatus);
+                    console.log("complete.statusCode=" + data.statusCode);
                 },
                 success: function (data, textStatus) {
-                    console.log("success.testStatus=" + textStatus);
-                    window.location.href = "/";
+                    window.location.href = "/index";
                 },
                 statusCode: {
                     401: function() {
