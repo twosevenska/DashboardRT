@@ -10,9 +10,9 @@
 
     <title>Logic Box</title>
 
-    <link href="css/bootstrap.min.css" rel="stylesheet">
-    <link href="css/cover.css" rel="stylesheet">
-    <script src="js/ie-emulation-modes-warning.js"></script>
+    <link href="static/css/bootstrap.min.css" rel="stylesheet">
+    <link href="static/css/cover.css" rel="stylesheet">
+    <script src="static/js/ie-emulation-modes-warning.js"></script>
 
 
   </head>
@@ -48,8 +48,8 @@
     </div>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-    <script src="js/bootstrap.min.js"></script>
-    <script src="js/ie10-viewport-bug-workaround.js"></script>
+    <script src="static/js/bootstrap.min.js"></script>
+    <script src="static/js/ie10-viewport-bug-workaround.js"></script>
     <script>
         function onLoginClick() {
             data = {

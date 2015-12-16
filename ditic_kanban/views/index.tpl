@@ -10,12 +10,12 @@
 
     <title>My Tickets</title>
 
-    <link href="css/bootstrap.min.css" rel="stylesheet">
-    <link href="css/bootstrap-theme.min.css" rel="stylesheet">
-    <link href="css/dashboard.css" rel="stylesheet">
-    <link href="css/sidebar.css" rel="stylesheet">
+    <link href="static/css/bootstrap.min.css" rel="stylesheet">
+    <link href="static/css/bootstrap-theme.min.css" rel="stylesheet">
+    <link href="static/css/dashboard.css" rel="stylesheet">
+    <link href="static/css/sidebar.css" rel="stylesheet">
 
-    <script src="js/ie-emulation-modes-warning.js"></script>
+    <script src="static/js/ie-emulation-modes-warning.js"></script>
   </head>
 
   <body>
@@ -117,7 +117,7 @@
           </div>
           <div class="division">
             <div class="col-md-1">
-              <img src="img/division_done.jpg" class="featurette-image img-responsive down" alt="me">
+              <img src="static/img/division_done.jpg" class="featurette-image img-responsive down" alt="me">
             </div>
           </div>
 
@@ -133,9 +133,9 @@
 
 <!-- ____________________________________________________________________________________ -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-    <script src="js/bootstrap.min.js"></script>
-    <script src="js/holder.min.js"></script>
-    <script src="js/ie10-viewport-bug-workaround.js"></script>
+    <script src="static/js/bootstrap.min.js"></script>
+    <script src="static/js/holder.min.js"></script>
+    <script src="static/js/ie10-viewport-bug-workaround.js"></script>
     <script>
     function onLogoutClick() {
             $.ajax({
