@@ -14,6 +14,7 @@ from bottle import get
 from bottle import post
 from bottle import template
 from bottle import request
+from bottle import response
 from bottle import run
 from bottle import redirect
 from bottle import route
@@ -78,42 +79,79 @@ def create_default_result():
 
 @get('/')
 def get_root():
-    start_time = time()
+    # start_time = time()
 
-    result = create_default_result()
-    # Removed to be a display at the TV
-    # if request.query.o == '' or not user_auth.check_id(request.query.o):
-    #    result.update({'message': ''})
-    #    return template('auth', result)
-    # result.update({'username': user_auth.get_email_from_id(request.query.o)})
-    result.update({'username_id': request.query.o})
-    today = date.today().isoformat()
-    result.update({'statistics': get_statistics(get_date(30, today), today)})
+    # result = create_default_result()
+    # # Removed to be a display at the TV
+    # # if request.query.o == '' or not user_auth.check_id(request.query.o):
+    # #    result.update({'message': ''})
+    # #    return template('auth', result)
+    # # result.update({'username': user_auth.get_email_from_id(request.query.o)})
+    # result.update({'username_id': request.query.o})
+    # today = date.today().isoformat()
+    # result.update({'statistics': get_statistics(get_date(30, today), today)})
 
-    # Is there any URGENT ticket?
-    result.update({'urgent': get_urgent_tickets(rt_object)})
+    # # Is there any URGENT ticket?
+    # result.update({'urgent': get_urgent_tickets(rt_object)})
 
-    result.update({'time_spent': '%0.2f seconds' % (time() - start_time)})
-    return template('entrance_summary', result)
+    # result.update({'time_spent': '%0.2f seconds' % (time() - start_time)})
+    # return template('entrance_summary', result)
+
+    user_id = request.get_cookie('account', secret='secret')
+    if user_id :
+        return template('index', {})
+    else:
+        return template('login', {})
 
 
 @post('/auth')
 def auth():
     result = create_default_result()
-    result.update({'username': request.forms.get('username'), 'password': request.forms.get('password')})
-    if request.forms.get('username') and request.forms.get('password'):
+
+    print(str(request.headers['Content-Type']))
+    print(request.body.readlines())
+
+    try:
+        username = request.json.get('username')
+        password = request.json.get('password')
+    except AttributeError as e:
+        print("AttributeError=" + str(e))
+        response.status = 500
+        return
+
+    if username and password:
         try:
-            if user_auth.check_password(request.forms.get('username'), request.forms.get('password')):
-                redirect('/?o=%s' % user_auth.get_email_id(request.forms.get('username')))
+            if user_auth.check_password(username, password):
+                user_id = user_auth.get_email_id(username)
+                print('user_id=' + user_id)
+                response.set_cookie('account', user_id, secret='secret')
+                response.status = 200
             else:
-                result.update({'message': 'Password incorrect'})
-                return template('auth', result)
+                response.status = 401
+
         except ValueError as e:
-            result.update({'message': str(e)})
-            return template('auth', result)
+            print("ValueError=" + str(e))
+            response.status = 500
     else:
-        result.update({'message': 'Mandatory fields'})
-        return template('auth', result)
+        response.status = 400
+
+    # result.update({'username': username, 'password': password})
+    # if username and password:
+    #     try:
+    #         if user_auth.check_password(username, password):
+    #             user_id = user_auth.get_email_id(username)
+    #             print('user_id=' + user_id)
+    #             response.set_cookie('account', user_id, secret='secret')
+    #             redirect('/')
+    #         else:
+    #             result.update({'message': 'Password incorrect'})
+    #             return template('auth', result)
+    #     except ValueError as e:
+    #         result.update({'message': str(e)})
+    #         return template('auth', result)
+    # else:
+    #     result.update({'message': 'Mandatory fields'})
+    #     return template('auth', result)
 
 
 @get('/detail/<email>')
