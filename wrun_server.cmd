@@ -1,5 +1,5 @@
 cls
-python setup.py install
+pip install -e .
 cd ditic_kanban
 ditic_kanban_server
 cd ..
