@@ -33,7 +33,7 @@
                 </div>
                 <br>
                 <div class="input2">
-                  <input id="password" type="password" class="forma-rect" placeholder="Password" aria-describedby="basic-addon1">
+                  <input onkeypress="onKeyPress(this, event)" id="password" type="password" class="forma-rect" placeholder="Password" aria-describedby="basic-addon1">
                 </div>
               </div>
             <button type="button" onclick='onLoginClick()' class="btn btn-default">LOGIN</button>
@@ -47,10 +47,17 @@
 
     </div>
 
+<!-- ____________________________________________________________________________________ -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
     <script src="static/js/bootstrap.min.js"></script>
     <script src="static/js/ie10-viewport-bug-workaround.js"></script>
     <script>
+        function onKeyPress(thisArg, theEvent) {
+          if (theEvent.keyCode == 13) {
+            onLoginClick();
+          }
+        }
+
         function onLoginClick() {
             data = {
                         username: document.getElementById('username').value,

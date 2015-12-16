@@ -15,12 +15,12 @@
     <link href="static/css/dashboard.css" rel="stylesheet">
     <link href="static/css/sidebar.css" rel="stylesheet">
 
-    <script src="js/ie-emulation-modes-warning.js"></script>
+    <script src="static/js/ie-emulation-modes-warning.js"></script>
   </head>
 
   <body>
 
-    <!-- 
+    <!--
     FIXED NAVBAR
     -->
     <nav class="navbar navbar-inverse navbar-fixed-top">
@@ -36,7 +36,7 @@
               <ul class="dropdown-menu">
                 <li><a href="#">Profile</a></li>
                 <li><a href="#">Preferences</a></li>
-                <li><a href="#">Logout</a></li>
+                <li><a href="#" onClick="onLogoutClick()">Logout</a></li>
                 <li role="separator" class="divider"></li>
                 <li class="dropdown-header">Nav header</li>
                 <li><a href="#">Separated link</a></li>
@@ -70,44 +70,21 @@
     </nav>
 
 
-    <!-- 
-    SIDEBAR 
+    <!--
+    SIDEBAR
     -->
     <nav class="main-menu">
       <div class="sidebar fa fa-home fa-2x">
           <div id="title" style="color: white"><h2>Dir-Inbox</h2></div>
             <div id="chatlist" class="mousescroll">
                <ul style="color: white">
-                  <li>Ticket1</li>
-                  <li>Ticket2</li>
-                  <li>Ticket3</li>
-                  <li>Ticket4</li>
-                  <li>Ticket5</li>
-                  <li>Ticket6</li>
-                  <li>Ticket7</li>
-                  <li>Ticket8</li>
-                  <li>Ticket1</li>
-                  <li>Ticket2</li>
-                  <li>Ticket3</li>
-                  <li>Ticket4</li>
-                  <li>Ticket1</li>
-                  <li>Ticket2</li>
-                  <li>Ticket3</li>
-                  <li>Ticket4</li>
-                  <li>Ticket1</li>
-                  <li>Ticket2</li>
-                  <li>Ticket5</li>
-                  <li>Ticket6</li>
-                  <li>Ticket7</li>
-                  <li>Ticket8</li>
-                  <li>Ticket1</li>
                 </ul>
               </div>
         </div>
     </nav>
 
-    <!-- 
-    TABLES 
+    <!--
+    TABLES
     -->
     <div class="jumbotron">
       <div class="container">
@@ -123,86 +100,18 @@
           <div class="stalled">
             <div id="chatlist" class="col-md-3 mousescroll">
               <ul>
-                <li>Ticket1</li>
-                <li>Ticket2</li>
-                <li>Ticket3</li>
-                <li>Ticket4</li>
-                <li>Ticket5</li>
-                <li>Ticket6</li>
-                <li>Ticket7</li>
-                <li>Ticket8</li>
-                <li>Ticket1</li>
-                <li>Ticket2</li>
-                <li>Ticket3</li>
-                <li>Ticket4</li>
-                <li>Ticket1</li>
-                <li>Ticket2</li>
-                <li>Ticket3</li>
-                <li>Ticket4</li>
-                <li>Ticket1</li>
-                <li>Ticket2</li>
-                <li>Ticket1</li>
-                <li>Ticket2</li>
-                <li>Ticket3</li>
-                <li>Ticket4</li>
-                <li>Ticket5</li>
-                <li>Ticket6</li>
-                <li>Ticket7</li>
-                <li>Ticket8</li>
-                <li>Ticket1</li>
-                <li>Ticket2</li>
-                <li>Ticket3</li>
-                <li>Ticket4</li>
-                <li>Ticket1</li>
-                <li>Ticket2</li>
-                <li>Ticket3</li>
-                <li>Ticket4</li>
-                <li>Ticket1</li>
-                <li>Ticket2</li>
               </ul>
             </div>
           </div>
           <div class="in">
             <div id="chatlist" class="col-md-3 mousescroll">
               <ul>
-              <li>Ticket1</li>
-              <li>Ticket2</li>
-              <li>Ticket3</li>
-              <li>Ticket4</li>
-              <li>Ticket5</li>
-              <li>Ticket6</li>
-              <li>Ticket7</li>
-              <li>Ticket8</li>
-              <li>Ticket1</li>
-              <li>Ticket2</li>
-              <li>Ticket3</li>
-              <li>Ticket4</li>
-              <li>Ticket1</li>
-              <li>Ticket2</li>
-              <li>Ticket3</li>
-              <li>Ticket4</li>
-              <li>Ticket1</li>
-              <li>Ticket2</li>
-              <li>Ticket3</li>
-              <li>Ticket4</li>
               </ul>
            </div>
          </div>
          <div class="active">
             <div id="chatlist" class="col-md-3 mousescroll">
               <ul>
-              <li>Ticket1</li>
-              <li>Ticket2</li>
-              <li>Ticket3</li>
-              <li>Ticket4</li>
-              <li>Ticket5</li>
-              <li>Ticket6</li>
-              <li>Ticket7</li>
-              <li>Ticket8</li>
-              <li>Ticket1</li>
-              <li>Ticket2</li>
-              <li>Ticket3</li>
-              
               </ul>
             </div>
           </div>
@@ -215,24 +124,6 @@
           <div class="done">
             <div id="chatlist" class="col-md-2 mousescroll">
               <ul>
-              <li>Ticket1</li>
-              <li>Ticket2</li>
-              <li>Ticket3</li>
-              <li>Ticket4</li>
-              <li>Ticket5</li>
-              <li>Ticket6</li>
-              <li>Ticket7</li>
-              <li>Ticket8</li>
-              <li>Ticket1</li>
-              <li>Ticket2</li>
-              <li>Ticket3</li>
-              <li>Ticket4</li>
-              <li>Ticket1</li>
-              <li>Ticket2</li>
-              <li>Ticket3</li>
-              <li>Ticket4</li>
-              <li>Ticket1</li>
-              <li>Ticket2</li>
               </ul>
             </div>
           </div> <!-- done -->
@@ -241,9 +132,25 @@
     </div><!-- jumbotron -->
 
 <!-- ____________________________________________________________________________________ -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
     <script src="static/js/bootstrap.min.js"></script>
     <script src="static/js/holder.min.js"></script>
     <script src="static/js/ie10-viewport-bug-workaround.js"></script>
+    <script>
+    function onLogoutClick() {
+            $.ajax({
+                type: "DELETE",
+                url: "/auth",
+                data: "{}",
+                contentType: "application/json",
+                complete: function (data, textStatus) {
+                    console.log("complete.statusCode=" + data.statusCode);
+                },
+                success: function (data) {
+                    window.location.href = "/login";
+                }
+            });
+        }
+    </script>
   </body>
 </html>

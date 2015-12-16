@@ -12,6 +12,7 @@ import pprint
 
 from bottle import get
 from bottle import post
+from bottle import delete
 from bottle import template
 from bottle import request
 from bottle import response
@@ -77,26 +78,12 @@ def create_default_result():
     return result
 
 
-@get('/')
+################################################################
+#   ROUTES
+################################################################
+
+@route('/')
 def get_root():
-    # start_time = time()
-
-    # result = create_default_result()
-    # # Removed to be a display at the TV
-    # # if request.query.o == '' or not user_auth.check_id(request.query.o):
-    # #    result.update({'message': ''})
-    # #    return template('auth', result)
-    # # result.update({'username': user_auth.get_email_from_id(request.query.o)})
-    # result.update({'username_id': request.query.o})
-    # today = date.today().isoformat()
-    # result.update({'statistics': get_statistics(get_date(30, today), today)})
-
-    # # Is there any URGENT ticket?
-    # result.update({'urgent': get_urgent_tickets(rt_object)})
-
-    # result.update({'time_spent': '%0.2f seconds' % (time() - start_time)})
-    # return template('entrance_summary', result)
-
     user_id = request.get_cookie('account', secret='secret')
     if user_id :
         redirect('/index')
@@ -104,11 +91,12 @@ def get_root():
         redirect('/login')
 
 
-@get('/login')
+@route('/login')
 def get_login():
     return template('login', {})
 
-@get('/index')
+
+@route('/index')
 def get_index():
     user_id = request.get_cookie('account', secret='secret')
     if user_id :
@@ -117,13 +105,12 @@ def get_index():
         redirect('/login')
 
 
+################################################################
+#   REST API
+################################################################
+
 @post('/auth')
 def auth():
-    result = create_default_result()
-
-    print(str(request.headers['Content-Type']))
-    print(request.body.readlines())
-
     try:
         username = request.json.get('username')
         password = request.json.get('password')
@@ -147,6 +134,16 @@ def auth():
             response.status = 500
     else:
         response.status = 400
+
+
+@delete('/auth')
+def auth():
+    user_id = request.get_cookie('account', secret='secret')
+    if user_id :
+        response.set_cookie('account', '', secret='secret')
+        response.status = 200
+    else:
+        response.status = 204
 
 
 @get('/detail/<email>')
