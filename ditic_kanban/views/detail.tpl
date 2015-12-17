@@ -1,3 +1,4 @@
+% max_len = 30
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,7 +9,7 @@
     <meta name="description" content="Dashboard RT - Logic Box">
     <meta name="author" content="Alexandre Vieira, André Martinez, Eduardo Pereira, Gloriya Gostyaeva, Gonçalo Barroso, Roberto Cunha">
 
-    <title>CIUC Kanban</title>
+    <title>DITIC Kanban</title>
 
     <link href="static/res/css/bootstrap.min.css" rel="stylesheet">
     <link href="static/res/css/bootstrap-theme.min.css" rel="stylesheet">
@@ -487,7 +488,6 @@
   </div>
 
 <script>
-
     function actionButton(ticketId, action, ticketStatus){
         var request = new XMLHttpRequest();
         request.onload = function(){window.location.reload()}

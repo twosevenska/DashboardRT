@@ -11,6 +11,7 @@ import threading
 import pprint
 
 from bottle import get
+from bottle import put
 from bottle import post
 from bottle import delete
 from bottle import template
@@ -111,10 +112,10 @@ def get_detail():
                     user_auth.get_email_from_id(user_id)
                  ), user_auth.get_email_from_id(user_id)))
 
-            result.update(user_tickets_details(
+            result.update({'dir-inbox':user_tickets_details(
                 user_auth.get_rt_object_from_email(
                     user_auth.get_email_from_id(user_id)
-                ), 'dir-inbox'))
+                 ), 'dir-inbox')})
             
             return template('detail', result)
         else:
@@ -163,6 +164,80 @@ def del_auth():
     else:
         response.status = 204
 
+@post('/ticket')
+def new_ticket():
+    try:
+    	user_id = request.get_cookie('account', secret='secret')
+    	subject = request.json.get('subject')
+    	text = request.json.get('text')
+    except AttributeError as e:
+        print("AttributeError=" + str(e))
+        response.status = 500
+        return
+    if user_id:
+        if user_id in user_auth.ids.keys():
+            try:
+                create_ticket(
+                    user_auth.get_rt_object_from_email(
+                        user_auth.get_email_from_id(user_id)
+                        ),
+                    subject,
+                    text,
+                    user_auth.get_email_from_id(user_id)
+                    )
+                response.status = 200
+                return
+            except:
+                print("AttributeError=" + str(e))
+                response.status = 500
+                return
+        else:
+            del_auth()
+            redirect('/login')
+    else:
+        redirect('/login')
+
+@put('/ticket/<ticket_id>/action/<action>')
+def ticket_action(ticket_id, action):
+
+    start_time = time()
+
+    result = create_default_result()
+    if request.query.o == '' or not user_auth.check_id(request.query.o):
+        result.update({'message': ''})
+        return template('auth', result)
+
+    # Apply the action to the ticket
+    result.update(ticket_actions(
+        user_auth.get_rt_object_from_email(
+            user_auth.get_email_from_id(request.query.o)
+        ),
+        ticket_id,
+        action,
+        request.query.email, user_auth.get_email_from_id(request.query.o)
+    ))
+
+    # Update table for this user
+    result.update(user_tickets_details(
+        user_auth.get_rt_object_from_email(
+            user_auth.get_email_from_id(request.query.o)
+        ), request.query.email))
+
+    result.update({'username': user_auth.get_email_from_id(request.query.o)})
+    result.update({'email': request.query.email})
+    result.update({'username_id': request.query.o})
+
+    # Is there any URGENT ticket?
+    result.update({'urgent': get_urgent_tickets(rt_object)})
+
+    result.update({'time_spent': '%0.2f seconds' % (time() - start_time)})
+    if request.query.email == 'dir' or request.query.email == 'dir-inbox' or request.query.email == 'unknown':
+        return template('ticket_list', result)
+    else:
+        return template('detail', result)
+################################################################
+#   NOT REWORKED
+################################################################
 
 @get('/detail/<email>')
 def email_detail(email):
@@ -244,82 +319,6 @@ def search():
 
     result.update({'time_spent': '%0.2f seconds' % (time() - start_time)})
     return template('search', result)
-
-
-@put('/ticket/<ticket_id>/action/<action>')
-def ticket_action(ticket_id, action):
-
-    start_time = time()
-
-    result = create_default_result()
-    if request.query.o == '' or not user_auth.check_id(request.query.o):
-        result.update({'message': ''})
-        return template('auth', result)
-
-    # Apply the action to the ticket
-    result.update(ticket_actions(
-        user_auth.get_rt_object_from_email(
-            user_auth.get_email_from_id(request.query.o)
-        ),
-        ticket_id,
-        action,
-        request.query.email, user_auth.get_email_from_id(request.query.o)
-    ))
-
-    # Update table for this user
-    result.update(user_tickets_details(
-        user_auth.get_rt_object_from_email(
-            user_auth.get_email_from_id(request.query.o)
-        ), request.query.email))
-
-    result.update({'username': user_auth.get_email_from_id(request.query.o)})
-    result.update({'email': request.query.email})
-    result.update({'username_id': request.query.o})
-
-    # Is there any URGENT ticket?
-    result.update({'urgent': get_urgent_tickets(rt_object)})
-
-    result.update({'time_spent': '%0.2f seconds' % (time() - start_time)})
-    if request.query.email == 'dir' or request.query.email == 'dir-inbox' or request.query.email == 'unknown':
-        return template('ticket_list', result)
-    else:
-        return template('detail', result)
-
-
-@post('/ticket')
-def new_ticket():
-    try:
-    	user_id = request.get_cookie('account', secret='secret')
-    	subject = request.json.get('subject')
-    	text = request.json.get('text')
-    except AttributeError as e:
-        print("AttributeError=" + str(e))
-        response.status = 500
-        return
-    if user_id:
-        if user_id in user_auth.ids.keys():
-            try:
-                create_ticket(
-                    user_auth.get_rt_object_from_email(
-                        user_auth.get_email_from_id(user_id)
-                        ),
-                    subject,
-                    text,
-                    user_auth.get_email_from_id(user_id)
-                    )
-                response.status = 200
-                return
-            except:
-                print("AttributeError=" + str(e))
-                response.status = 500
-                return
-        else:
-            del_auth()
-            redirect('/login')
-    else:
-        redirect('/login')
-
-
 
 @get('/ticket/<ticket_id:int>')
 def get_ticket_details(ticket_id):

@@ -8,7 +8,7 @@
     <meta name="description" content="Dashboard RT - Logic Box">
     <meta name="author" content="Alexandre Vieira, André Martinez, Eduardo Pereira, Gloriya Gostyaeva, Gonçalo Barroso, Roberto Cunha">
 
-    <title>CIUC Kanban</title>
+    <title>DITIC Kanban</title>
 
     <link href="static/res/css/bootstrap.min.css" rel="stylesheet">
     <link href="static/res/css/cover.css" rel="stylesheet">
