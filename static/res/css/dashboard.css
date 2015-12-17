@@ -49,6 +49,11 @@ body {
 }
 
 
+td button{
+    background: transparent;
+    border: none !important;
+}
+
 
 /*
  * Sidebar
