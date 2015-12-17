@@ -37,11 +37,27 @@
       Subject: <input id="sub" type="text" placeholder="Subject">
       Text: <input id="text" type="text" placeholder="Text here">
     <ul><li><a href="#">Advanced Ticket Creation</a></li></ul>
-    <button type="submit">create</button>
+    <button type="submit" onclick="create()">create</button>
     </p></li>
         </ul>
     </li>
   </ul>
 
   </div>
+  <script>
+    function onLogoutClick() {
+            $.ajax({
+                type: "DELETE",
+                url: "/auth",
+                data: "{}",
+                contentType: "application/json",
+                complete: function (data, textStatus) {
+                    console.log("complete.statusCode=" + data.statusCode);
+                },
+                success: function (data) {
+                    window.location.href = "/login";
+                }
+            });
+        }
+  </script>
 </nav>

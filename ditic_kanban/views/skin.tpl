@@ -10,11 +10,12 @@
 
     <title>CIUC Kanban</title>
 
-    <link href="static/css/bootstrap.min.css" rel="stylesheet">
-    <link href="static/css/bootstrap-theme.min.css" rel="stylesheet">
-    <link href="static/css/dashboard.css" rel="stylesheet">
-    <link href="static/css/sidebar.css" rel="stylesheet">
-    <link href="/static/res/css/bootstrap-table/bootstrap-table.css" rel="stylesheet">
+
+    <link href="static/res/css/bootstrap-theme.min.css" rel="stylesheet">
+    <link href="static/res/css/bootstrap.min.css" rel="stylesheet">
+    <link href="static/res/css/dashboard.css" rel="stylesheet">
+    <link href="static/res/css/sidebar.css" rel="stylesheet">
+    <link href="static/res/css/bootstrap-table/bootstrap-table.css" rel="stylesheet">
     
     % graph_script = get('graph_script', '')
     % if graph_script:
