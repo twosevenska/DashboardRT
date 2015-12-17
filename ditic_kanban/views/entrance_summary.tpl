@@ -108,7 +108,7 @@
 
         % # DIR-INBOX
         % sum = 0
-        % # we need this code because DIR can have tickets all along several status
+        % # we need this code because DIR-INBOX can have tickets all along several status
         % for status in summary['dir-inbox']:
         %   sum += summary['dir-inbox'][status]
         % end
