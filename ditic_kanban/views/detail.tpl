@@ -139,31 +139,29 @@
 		<table data-toggle="table" class="stalled-table" data-show-header="false">
             <thead>
                 <tr>
-                    <th></th>
-                    <th></th>
-                    <th></th>
+                    <th data-valign="middle"></th>
+                    <th data-valign="middle"></th>
+                    <th data-valign="middle"></th>
+                    <th data-valign="middle"></th>
                 </tr>
             </thead>
             <tbody>
-
                 % for status in ['stalled']:
-
                 %   if status not in tickets.keys():
                 %       continue
                 %   end
                 <tr><td>
-                    %   for priority in sorted(tickets[status], reverse=True):
-                    {{priority}}<br>
+                    % for priority in sorted(tickets[status], reverse=True):
                     % for ticket in tickets[status][priority]:
-                    &nbsp;&nbsp;
-                    % if ticket['kanban_actions']['back']:
-                    <button onclick="actionButton({{ticket['id']}}, 'back')">&lt;</button>
-                    % end
                     % if ticket['kanban_actions']['interrupted']:
-                    <button onclick="actionButton({{ticket['id']}}, 'interrupted');">/</button>
+                    <button onclick="actionButton({{ticket['id']}}, 'interrupted')" type="button">
+                            <span class="glyphicon glyphicon-ban-circle" aria-hidden="true"></span>
+                    </button>
                     % end
                     % if ticket['kanban_actions']['increase_priority']:
-                    <button onclick="actionButton({{ticket['id']}}, 'increase_priority')">^</button>
+                    <button onclick="actionButton({{ticket['id']}}, 'increase_priority')" type="button">
+                            <span class="glyphicon glyphicon-menu-up" aria-hidden="true"></span>
+                    </button>
                     % end
                     </td><td>
                     <a title="#{{ticket['id']}}
@@ -182,19 +180,33 @@
                     </a>
                     </td><td>
                     % if ticket['kanban_actions']['decrease_priority']:
-                    <button onclick="actionButton({{ticket['id']}}, 'decrease_priority')">v</button>
+                    <button onclick="actionButton({{ticket['id']}}, 'decrease_priority')" type="button">
+                            <span class="glyphicon glyphicon-menu-down" aria-hidden="true"></span>
+                    </button>
+                    </td><td>
                     % end
                     % if ticket['kanban_actions']['stalled']:
-                    <button onclick="actionButton({{ticket['id']}}, 'stalled')">\</button>
+                    <button onclick="actionButton({{ticket['id']}}, 'stalled')" type="button">
+                            <span class="glyphicon glyphicon-time" aria-hidden="true"></span>
+                    </button>
+                    </td><td>
                     % end
                     % if ticket['kanban_actions']['forward']:
-                    <button onclick="actionButton({{ticket['id']}}, 'forward', '{{ticket['status']}}')">&gt;</button>
+                    <button onclick="actionButton({{ticket['id']}}, 'forward', '{{ticket['status']}}')" type="button">
+                            <span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span>
+                    </button>
+                    </td><td>
                     % end
-                    <br>
+                    % if ticket['kanban_actions']['back']:
+                    <button onclick="actionButton({{ticket['id']}}, 'back')" type="button">
+                            <span class="glyphicon glyphicon-flash" aria-hidden="true"></span>
+                    </button>
+                    </td>
+                    % end
                     % end
                 %   end
                 % end
-                </td></tr>
+                </tr>
                 </div>
             </tbody>
         </table>
@@ -203,11 +215,11 @@
 		<table data-toggle="table" class="in-table" data-show-header="false">
             <thead>
                 <tr>
-                    <th></th>
-                    <th></th>
-                    <th></th>
-                    <th></th>
-                    <th></th>
+                    <th data-valign="middle"></th>
+                    <th data-valign="middle"></th>
+                    <th data-valign="middle"></th>
+                    <th data-valign="middle"></th>
+                    <th data-valign="middle"></th>
                 </tr>
             </thead>
             <tbody>
@@ -227,11 +239,15 @@
                         </td><td>
                         % end
                         % if ticket['kanban_actions']['interrupted']:
-                        <button onclick="actionButton({{ticket['id']}}, 'interrupted');">/</button>
+                        <button onclick="actionButton({{ticket['id']}}, 'interrupted')" type="button">
+                            <span class="glyphicon glyphicon-ban-circle" aria-hidden="true"></span>
+                        </button>
                         </td><td>
                         % end
                         % if ticket['kanban_actions']['increase_priority']:
-                        <button onclick="actionButton({{ticket['id']}}, 'increase_priority')">^</button>
+                        <button onclick="actionButton({{ticket['id']}}, 'increase_priority')" type="button">
+                            <span class="glyphicon glyphicon-menu-up" aria-hidden="true"></span>
+                        </button>
                         </td><td>
                         % end
                         <a title="#{{ticket['id']}}
@@ -250,15 +266,19 @@
                         </a>
                         </td><td>
                         % if ticket['kanban_actions']['decrease_priority']:
-                        <button onclick="actionButton({{ticket['id']}}, 'decrease_priority')">v</button>
+                        <button onclick="actionButton({{ticket['id']}}, 'decrease_priority')" type="button">
+                            <span class="glyphicon glyphicon-menu-down" aria-hidden="true"></span>
+                        </button>
                         </td><td>
                         % end
                         % if ticket['kanban_actions']['stalled']:
-                        <button onclick="actionButton({{ticket['id']}}, 'stalled')">\</button>
+                        <button onclick="actionButton({{ticket['id']}}, 'stalled')" type="button">
+                            <span class="glyphicon glyphicon-time" aria-hidden="true"></span></button>
                         </td><td>
                         % end
                         % if ticket['kanban_actions']['forward']:
-                        <button onclick="actionButton({{ticket['id']}}, 'forward', '{{ticket['status']}}')">&gt;</button>
+                        <button onclick="actionButton({{ticket['id']}}, 'forward', '{{ticket['status']}}')" type="button">
+                            <span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span></button>
                         % end
                         % end
                         </td></tr>
@@ -271,9 +291,11 @@
 		<table data-toggle="table" class="in-table" data-show-header="false">
             <thead>
                 <tr>
-                    <th></th>
-                    <th></th>
-                    <th></th>
+                    <th data-valign="middle"></th>
+                    <th data-valign="middle"></th>
+                    <th data-valign="middle"></th>
+                    <th data-valign="middle"></th>
+                    <th data-valign="middle"></th>
                 </tr>
             </thead>
             <tbody>
@@ -287,15 +309,22 @@
                         <tr><td>
                         % for ticket in tickets[status][priority]:
                         % if ticket['kanban_actions']['back']:
-                        <button onclick="actionButton({{ticket['id']}}, 'back')">&lt;</button>
-                        % end
-                        % if ticket['kanban_actions']['interrupted']:
-                        <button onclick="actionButton({{ticket['id']}}, 'interrupted');">/</button>
+                        <button onclick="actionButton({{ticket['id']}}, 'back')" type="button">
+                            <span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span>
+                        </button>
+                        </td><td>
                         % end
                         % if ticket['kanban_actions']['increase_priority']:
-                        <button onclick="actionButton({{ticket['id']}}, 'increase_priority')">^</button>
+                        <button onclick="actionButton({{ticket['id']}}, 'increase_priority')" type="button">
+                            <span class="glyphicon glyphicon-menu-up" aria-hidden="true"></span></button>
+
                         % end
+                        % if ticket['kanban_actions']['interrupted']:
+                        <button onclick="actionButton({{ticket['id']}}, 'interrupted')" type="button">
+                            <span class="glyphicon glyphicon-ban-circle" aria-hidden="true"></span>
+                        </button>
                         </td><td>
+                        % end
                         <a title="#{{ticket['id']}}
                             Owner: {{ticket['owner']}}
                             Status: {{ticket['status']}}
@@ -312,13 +341,17 @@
                         </a>
                         </td><td>
                         % if ticket['kanban_actions']['decrease_priority']:
-                        <button onclick="actionButton({{ticket['id']}}, 'decrease_priority')">v</button>
+                        <button onclick="actionButton({{ticket['id']}}, 'decrease_priority')" type="button">
+                            <span class="glyphicon glyphicon-menu-down" aria-hidden="true"></span></button>
                         % end
                         % if ticket['kanban_actions']['stalled']:
-                        <button onclick="actionButton({{ticket['id']}}, 'stalled')">\</button>
+                        <button onclick="actionButton({{ticket['id']}}, 'stalled')" type="button">
+                            <span class="glyphicon glyphicon-time" aria-hidden="true"></span></button>
+                        </td><td>
                         % end
                         % if ticket['kanban_actions']['forward']:
-                        <button onclick="actionButton({{ticket['id']}}, 'forward', '{{ticket['status']}}')">&gt;</button>
+                        <button onclick="actionButton({{ticket['id']}}, 'forward', '{{ticket['status']}}')" type="button">
+                            <span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span></button>
                         % end
                         % end
                         </td></tr>
