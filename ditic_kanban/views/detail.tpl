@@ -15,7 +15,7 @@
     <link href="/static/res/css/bootstrap-theme.min.css" rel="stylesheet">
     <link href="/static/res/css/dashboard.css" rel="stylesheet">
     <link href="/static/res/css/sidebar.css" rel="stylesheet">
-	<link rel="stylesheet" href="/static/res/css/bootstrap-table/bootstrap-table.css">
+	<link href="/static/res/css/bootstrap-table/bootstrap-table.css" rel="stylesheet">
 
     <script src="/static/res/js/ie-emulation-modes-warning.js"></script>
   </head>
@@ -84,10 +84,7 @@
 			</div>
       </div>
     </nav>
-                % status = 'stalled'
-                % if status in number_tickets_per_status:
-                {{number_tickets_per_status[status]}}
-                % end
+
 <!-- TABLES -->
   <div class="container">
 	<!-- Row for Titles -->
@@ -98,77 +95,69 @@
 	    <h2 class="col-md-3">Done</h2>
 	</div>
 
+    <div class="row">
+        <h4 class="col-md-3">
+            % status = 'stalled'
+            % if status in number_tickets_per_status and status >= 1:
+                {{number_tickets_per_status[status]}}
+            % else:
+                0
+            % end
+        </h4>
+        <h4 class="col-md-3">
+            % status = 'new'
+            % if status in number_tickets_per_status >= 1:
+               {{number_tickets_per_status[status]}}
+            % else:
+                0
+            % end
+            % if status in email_limit:
+                (max: {{email_limit[status]}})
+            % end
+        </h4>
+        <h4 class="col-md-3">
+            % status = 'open'
+            % if status in number_tickets_per_status >= 1:
+                {{number_tickets_per_status[status]}}
+            % else:
+                0
+            % end
+            % if status in email_limit:
+                (max: {{email_limit[status]}})
+            % end
+        </h4>
+        <h4 class="col-md-3">
+            % status = 'resolved'
+            % if status in number_tickets_per_status >= 1:
+                {{number_tickets_per_status[status]}}
+            % else:
+                0
+            % end
+            % if status in email_limit:
+                (max: {{email_limit[status]}})
+            % end
+        </h4>
+    </div>
+
     <!-- Row for ticket tables -->
 	<div class="row">
 	  <div class="col-md-3">
-		<table data-toggle="table" class="stalled-table">
+		<table data-toggle="table" class="stalled-table" data-show-header="false">
             <thead>
+                <tr>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                </tr>
             </thead>
             <tbody>
-            </tbody>
-        </table>
-	  </div>
-	  <div class="col-md-3">
-		<table id="in-table" class="in-table" data-show-header="false"></table>
-	 </div>
-	  <div class="col-md-3">
-		<table id="active-table" class="active-table" data-show-header="false"></table>
-	 </div>
-	 <div class="col-md-3">
-		<table id="done-table" class="done-table" data-show-header="false"></table>
-	 </div>
-	</div>
 
-    <table data-toggle="table" class="stalled-table">
-        <thead>
-            <tr>
-                <td align="center">
-                    <strong>Stalled</strong><br>
-
-                </td>
-
-                <td>
-                    <strong>IN</strong><br>
-                    % status = 'new'
-                    % if status in number_tickets_per_status:
-                        <strong>{{number_tickets_per_status[status]}}</strong>
-                    % end
-                    % if status in email_limit:
-                        (max: {{email_limit[status]}})
-                    % end
-                </td>
-
-                <td>
-                    <strong>ACTIVE</strong><br>
-                    % status = 'open'
-                    % if status in number_tickets_per_status:
-                        <strong>{{number_tickets_per_status[status]}}</strong>
-                    % end
-                    % if status in email_limit:
-                        (max: {{email_limit[status]}})
-                    % end
-                </td>
-
-                <td>
-                    <strong>DONE</strong><br>
-                    % status = 'resolved'
-                    % if status in number_tickets_per_status:
-                        <strong>{{number_tickets_per_status[status]}}</strong>
-                    % end
-                    % if status in email_limit:
-                        (max: {{email_limit[status]}})
-                    % end
-                </td>
-            </tr>
-        </thead>
-        <tbody>
-             <tr>
                 % for status in ['stalled']:
 
                 %   if status not in tickets.keys():
                 %       continue
                 %   end
-                <td>
+                <tr><td>
                     %   for priority in sorted(tickets[status], reverse=True):
                     {{priority}}<br>
                     % for ticket in tickets[status][priority]:
@@ -182,58 +171,7 @@
                     % if ticket['kanban_actions']['increase_priority']:
                     <button onclick="actionButton({{ticket['id']}}, 'increase_priority')">^</button>
                     % end
-                    <a title="#{{ticket['id']}}
-
-                        Owner: {{ticket['owner']}}
-                        Status: {{ticket['status']}}
-                        TimeWorked: {{ticket['timeworked']}}
-
-                        Requestor: {{ticket['requestors']}}
-                        Subject: {{ticket['subject']}}" href="/ticket/{{ticket['id']}}?o={{get('username_id', '')}}">
-                        {{ticket['id']}}
-                        % subject = ticket['subject']
-                        % if len(ticket['subject']) > max_len:
-                        %   subject = ticket['subject'][:max_len]+'...'
-                        % end
-                        {{subject}}
-                    </a>
-                    % if ticket['kanban_actions']['decrease_priority']:
-                    <button onclick="actionButton({{ticket['id']}}, 'decrease_priority')">v</button>
-                    % end
-                    % if ticket['kanban_actions']['stalled']:
-                    <button onclick="actionButton({{ticket['id']}}, 'stalled')">\</button>
-                    % end
-                    % if ticket['kanban_actions']['forward']:
-                    <button onclick="actionButton({{ticket['id']}}, 'forward', '{{ticket['status']}}')">&gt;</button>
-                    % end
-                    <br>
-                    % end
-                %   end
-                </td>
-                % end
-                </div>
-            </tr>
-            <tr>
-                % for status in ['new', 'open', 'resolved']:
-                %   if status not in tickets.keys():
-                <td></td>
-                %       continue
-                %   end
-                <div align="center" style="background-color: red;">
-                <td valign="top">
-                %   for priority in sorted(tickets[status], reverse=True):
-                    {{priority}}<br>
-                    % for ticket in tickets[status][priority]:
-                    &nbsp;&nbsp;
-                    % if ticket['kanban_actions']['back']:
-                    <button onclick="actionButton({{ticket['id']}}, 'back')">&lt;</button>
-                    % end
-                    % if ticket['kanban_actions']['interrupted']:
-                    <button onclick="actionButton({{ticket['id']}}, 'interrupted');">/</button>
-                    % end
-                    % if ticket['kanban_actions']['increase_priority']:
-                    <button onclick="actionButton({{ticket['id']}}, 'increase_priority')">^</button>
-                    % end
+                    </td><td>
                     <a title="#{{ticket['id']}}
                         Owner: {{ticket['owner']}}
                         Status: {{ticket['status']}}
@@ -248,6 +186,7 @@
                         % end
                         {{subject}}
                     </a>
+                    </td><td>
                     % if ticket['kanban_actions']['decrease_priority']:
                     <button onclick="actionButton({{ticket['id']}}, 'decrease_priority')">v</button>
                     % end
@@ -260,13 +199,195 @@
                     <br>
                     % end
                 %   end
-                </td>
                 % end
+                </td></tr>
                 </div>
-            </tr>
+            </tbody>
+        </table>
+	  </div>
+	  <div class="col-md-3">
+		<table data-toggle="table" class="in-table" data-show-header="false">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                % for status in ['new']:
 
-        </tbody>
-    </table>
+                    %   if status not in tickets.keys():
+                    %       continue
+                    %   end
+
+                    % for priority in sorted(tickets[status], reverse=True):
+                        <tr><td>
+                        % for ticket in tickets[status][priority]:
+                        % if ticket['kanban_actions']['back']:
+                        <button onclick="actionButton({{ticket['id']}}, 'back')" type="button">
+                            <span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span>
+                        </button>
+                        </td><td>
+                        % end
+                        % if ticket['kanban_actions']['interrupted']:
+                        <button onclick="actionButton({{ticket['id']}}, 'interrupted');">/</button>
+                        </td><td>
+                        % end
+                        % if ticket['kanban_actions']['increase_priority']:
+                        <button onclick="actionButton({{ticket['id']}}, 'increase_priority')">^</button>
+                        </td><td>
+                        % end
+                        <a title="#{{ticket['id']}}
+                            Owner: {{ticket['owner']}}
+                            Status: {{ticket['status']}}
+                            TimeWorked: {{ticket['timeworked']}}
+
+                            Requestor: {{ticket['requestors']}}
+                            Subject: {{ticket['subject']}}" href="/ticket/{{ticket['id']}}?o={{get('username_id', '')}}">
+                            {{ticket['id']}}
+                            % subject = ticket['subject']
+                            % if len(ticket['subject']) > max_len:
+                            %   subject = ticket['subject'][:max_len]+'...'
+                            % end
+                            {{subject}}
+                        </a>
+                        </td><td>
+                        % if ticket['kanban_actions']['decrease_priority']:
+                        <button onclick="actionButton({{ticket['id']}}, 'decrease_priority')">v</button>
+                        </td><td>
+                        % end
+                        % if ticket['kanban_actions']['stalled']:
+                        <button onclick="actionButton({{ticket['id']}}, 'stalled')">\</button>
+                        </td><td>
+                        % end
+                        % if ticket['kanban_actions']['forward']:
+                        <button onclick="actionButton({{ticket['id']}}, 'forward', '{{ticket['status']}}')">&gt;</button>
+                        % end
+                        % end
+                        </td></tr>
+                    % end
+                % end
+            </tbody>
+        </table>
+	 </div>
+	  <div class="col-md-3">
+		<table data-toggle="table" class="in-table" data-show-header="false">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                % for status in ['open']:
+
+                    %   if status not in tickets.keys():
+                    %       continue
+                    %   end
+
+                    % for priority in sorted(tickets[status], reverse=True):
+                        <tr><td>
+                        % for ticket in tickets[status][priority]:
+                        % if ticket['kanban_actions']['back']:
+                        <button onclick="actionButton({{ticket['id']}}, 'back')">&lt;</button>
+                        % end
+                        % if ticket['kanban_actions']['interrupted']:
+                        <button onclick="actionButton({{ticket['id']}}, 'interrupted');">/</button>
+                        % end
+                        % if ticket['kanban_actions']['increase_priority']:
+                        <button onclick="actionButton({{ticket['id']}}, 'increase_priority')">^</button>
+                        % end
+                        </td><td>
+                        <a title="#{{ticket['id']}}
+                            Owner: {{ticket['owner']}}
+                            Status: {{ticket['status']}}
+                            TimeWorked: {{ticket['timeworked']}}
+
+                            Requestor: {{ticket['requestors']}}
+                            Subject: {{ticket['subject']}}" href="/ticket/{{ticket['id']}}?o={{get('username_id', '')}}">
+                            {{ticket['id']}}
+                            % subject = ticket['subject']
+                            % if len(ticket['subject']) > max_len:
+                            %   subject = ticket['subject'][:max_len]+'...'
+                            % end
+                            {{subject}}
+                        </a>
+                        </td><td>
+                        % if ticket['kanban_actions']['decrease_priority']:
+                        <button onclick="actionButton({{ticket['id']}}, 'decrease_priority')">v</button>
+                        % end
+                        % if ticket['kanban_actions']['stalled']:
+                        <button onclick="actionButton({{ticket['id']}}, 'stalled')">\</button>
+                        % end
+                        % if ticket['kanban_actions']['forward']:
+                        <button onclick="actionButton({{ticket['id']}}, 'forward', '{{ticket['status']}}')">&gt;</button>
+                        % end
+                        % end
+                        </td></tr>
+                    % end
+                % end
+            </tbody>
+        </table>
+	 </div>
+	 <div class="col-md-3">
+		<table data-toggle="table" class="in-table" data-show-header="false">
+            <thead>
+                <tr>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                % for status in ['resolved']:
+
+                    %   if status not in tickets.keys():
+                    %       continue
+                    %   end
+
+                    % for priority in sorted(tickets[status], reverse=True):
+                        % for ticket in tickets[status][priority]:
+                        % if ticket['kanban_actions']['back']:
+                        <button onclick="actionButton({{ticket['id']}}, 'back')">&lt;</button>
+                        % end
+                        % if ticket['kanban_actions']['interrupted']:
+                        <button onclick="actionButton({{ticket['id']}}, 'interrupted');">/</button>
+                        % end
+                        % if ticket['kanban_actions']['increase_priority']:
+                        <button onclick="actionButton({{ticket['id']}}, 'increase_priority')">^</button>
+                        % end
+                        <tr><td><a title="#{{ticket['id']}}
+                            Owner: {{ticket['owner']}}
+                            Status: {{ticket['status']}}
+                            TimeWorked: {{ticket['timeworked']}}
+
+                            Requestor: {{ticket['requestors']}}
+                            Subject: {{ticket['subject']}}" href="/ticket/{{ticket['id']}}?o={{get('username_id', '')}}">
+                            {{ticket['id']}}
+                            % subject = ticket['subject']
+                            % if len(ticket['subject']) > max_len:
+                            %   subject = ticket['subject'][:max_len]+'...'
+                            % end
+                            {{subject}}
+                        </a></tr></td>
+                        % if ticket['kanban_actions']['decrease_priority']:
+                        <button onclick="actionButton({{ticket['id']}}, 'decrease_priority')">v</button>
+                        % end
+                        % if ticket['kanban_actions']['stalled']:
+                        <button onclick="actionButton({{ticket['id']}}, 'stalled')">\</button>
+                        % end
+                        % if ticket['kanban_actions']['forward']:
+                        <button onclick="actionButton({{ticket['id']}}, 'forward', '{{ticket['status']}}')">&gt;</button>
+                        % end
+                        % end
+                    % end
+                % end
+            </tbody>
+        </table>
+	 </div>
+	</div>
     </div>
   </div>
 

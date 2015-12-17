@@ -99,8 +99,17 @@ def get_login():
 @route('/index')
 def get_index():
     user_id = request.get_cookie('account', secret='secret')
-    if user_id :
-        return template('index', {})
+    if user_id:
+        result = create_default_result()
+        result.update({'username': user_auth.get_email_from_id(user_id)})
+        result.update({'email': user_auth.get_email_from_id(user_id)})
+        result.update({'username_id': user_id})
+
+        result.update(user_tickets_details(
+            user_auth.get_rt_object_from_email(
+                user_auth.get_email_from_id(user_id)
+            ), user_auth.get_email_from_id(user_id)))
+        return template('detail', result)
     else:
         redirect('/login')
 
