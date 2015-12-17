@@ -15,13 +15,9 @@
   </head>
 
   <body>
-
     <div class="site-wrapper">
-
       <div class="site-wrapper-inner">
-
         <div class="cover-container">
-
           <div class="inner cover">
             <center>
               <div class="input">
@@ -35,13 +31,9 @@
               </div>
             <button type="button" onclick='onLoginClick()' class="btn btn-default">LOGIN</button>
             </center>
-
           </div>
-
         </div>
-
       </div>
-
     </div>
 
 <!-- ____________________________________________________________________________________ -->
@@ -73,12 +65,15 @@
                     console.log("complete.statusCode=" + data.statusCode);
                 },
                 success: function (data, textStatus) {
-                    window.location.href = "/index";
+                    window.location.href = "/detail";
                 },
                 statusCode: {
                     401: function() {
                         alert("THOU SHALL NOT PASS");
-                    }
+                      },
+                    500: function() {
+                        window.location.reload();
+                      }
                 }
             });
         }

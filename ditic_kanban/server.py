@@ -86,7 +86,7 @@ def create_default_result():
 def get_root():
     user_id = request.get_cookie('account', secret='secret')
     if user_id :
-        redirect('/index')
+        redirect('/detail')
     else:
         redirect('/login')
 
@@ -96,11 +96,30 @@ def get_login():
     return template('login', {})
 
 
-@route('/index')
-def get_index():
+@route('/detail')
+def get_detail():
     user_id = request.get_cookie('account', secret='secret')
-    if user_id :
-        return template('index', {})
+    if user_id:
+        if user_id in user_auth.ids.keys():
+            result = create_default_result()
+            result.update({'username': user_auth.get_email_from_id(user_id)})
+            result.update({'email': user_auth.get_email_from_id(user_id)})
+            result.update({'username_id': user_id})
+
+            result.update(user_tickets_details(
+                user_auth.get_rt_object_from_email(
+                    user_auth.get_email_from_id(user_id)
+                 ), user_auth.get_email_from_id(user_id)))
+
+            result.update(user_tickets_details(
+                user_auth.get_rt_object_from_email(
+                    user_auth.get_email_from_id(user_id)
+                ), 'dir-inbox'))
+            
+            return template('detail', result)
+        else:
+    	    del_auth()
+    	    redirect('/detail')
     else:
         redirect('/login')
 
@@ -137,7 +156,7 @@ def auth():
 
 
 @delete('/auth')
-def auth():
+def del_auth():
     user_id = request.get_cookie('account', secret='secret')
     if user_id :
         response.set_cookie('account', '', secret='secret')
