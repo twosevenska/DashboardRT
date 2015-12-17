@@ -49,13 +49,16 @@
         <li class="dropdown">
             <a href="#" class="dropdown-toggle m_right" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">New ticket <span class="caret"></span></a>
             <ul class="dropdown-menu">
-        <li><p>
+        <li><p align="center" style="color:black;">
             <b>Create quick ticket:</b>
             </br>
             Subject: <input id="sub" type="text" placeholder="Subject">
             Text: <input id="text" type="text" placeholder="Text here">
-        <ul><li><a href="#">Advanced Ticket Creation</a></li></ul>
-        <button type="button" onclick="onCreateClick()">create</button>
+        </p></li>
+        <!--<ul><li><a href="#">Advanced Ticket Creation</a></li></ul>-->
+        <li role="separator" class="divider"></li>
+        <li><p align="center" style="color:black;">
+            <button type="button" class="btn btn-primary" onclick="onCreateClick()">create</button>
         </p></li>
         </ul>
     </li>
@@ -502,7 +505,7 @@
         }else if(action==='forward'){
             strReq = forwardButton(ticketId, ticketStatus);
         }
-        request.open("GET", strReq, true);
+        request.open("PUT", strReq, true);
         request.send();
     }
 

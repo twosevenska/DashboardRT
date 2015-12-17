@@ -246,7 +246,7 @@ def search():
     return template('search', result)
 
 
-@get('/ticket/<ticket_id>/action/<action>')
+@put('/ticket/<ticket_id>/action/<action>')
 def ticket_action(ticket_id, action):
 
     start_time = time()
@@ -288,8 +288,6 @@ def ticket_action(ticket_id, action):
 
 @post('/ticket')
 def new_ticket():
-    start_time = time()
-    print("new ticket")
     try:
     	user_id = request.get_cookie('account', secret='secret')
     	subject = request.json.get('subject')
@@ -298,9 +296,6 @@ def new_ticket():
         print("AttributeError=" + str(e))
         response.status = 500
         return
-
-    print("sub:"+subject)
-    print("text:"+text)
     if user_id:
         if user_id in user_auth.ids.keys():
             try:
@@ -315,14 +310,14 @@ def new_ticket():
                 response.status = 200
                 return
             except:
-            	print("AttributeError=" + str(e))
-            	response.status = 500
-            	return
+                print("AttributeError=" + str(e))
+                response.status = 500
+                return
         else:
-        	del_auth()
-        	redirect('/login')
+            del_auth()
+            redirect('/login')
     else:
-    	redirect('/login')
+        redirect('/login')
 
 
 

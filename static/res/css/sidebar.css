@@ -19,7 +19,8 @@ font-size:20px;
 
 
 .main-menu:hover,nav.main-menu.expanded {
-width:400px;
+width:20px;
+left:0px;
 overflow:visible;
 background-color: #333;
 
@@ -29,12 +30,12 @@ background-color: #333;
 background-color: #333;
 border-right:1px solid #000;
 position:absolute;
-top:0;
+top:0px;
 bottom:0;
 height:100%;
-left:0;
+left:-270px;
 width:20px;
-overflow:hidden;
+overflow:visible;
 -webkit-transition:width .05s linear;
 transition:width .05s linear;
 -webkit-transform:translateZ(0) scale(1,1);
