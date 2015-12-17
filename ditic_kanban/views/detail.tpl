@@ -1,5 +1,70 @@
-%include('navigator')
-% max_len = 30
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <meta name="description" content="Dashboard RT - Logic Box">
+    <meta name="author" content="Alexandre Vieira, André Martinez, Eduardo Pereira, Gloriya Gostyaeva, Gonçalo Barroso, Roberto Cunha">
+
+    <title>CIUC Kanban</title>
+
+    <link href="static/res/css/bootstrap.min.css" rel="stylesheet">
+    <link href="static/res/css/bootstrap-theme.min.css" rel="stylesheet">
+    <link href="static/res/css/dashboard.css" rel="stylesheet">
+    <link href="static/res/css/sidebar.css" rel="stylesheet">
+    <link href="static/res/css/bootstrap-table/bootstrap-table.css" rel="stylesheet">
+</head>
+<body>
+<nav class="navbar navbar-inverse navbar-fixed-top">
+  <div class="navbar-collapse collapse">
+    <ul class="nav navbar-nav navbar-left">
+      <a class="navbar-brand" href="/">Board</a>
+      <a class="navbar-brand" id="tickets" href="/index">My Tickets</a>
+    </ul>
+    <!-- ADMIN -->
+      <ul class="nav navbar-nav navbar-right">
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle m_right" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Admin<span class="caret"></span></a>
+          <ul class="dropdown-menu">
+            <li><a href="#">Profile</a></li>
+            <li><a href="#">Preferences</a></li>
+            <li><a href="#" onClick="onLogoutClick()">Logout</a></li>
+            <li role="separator" class="divider"></li>
+            <li class="dropdown-header">Nav header</li>
+            <li><a href="#">Separated link</a></li>
+            <li><a href="#">One more separated link</a></li>
+          </ul>
+        </li>
+      </ul>
+      <!-- SEARCH -->
+      <form class="navbar-form navbar-right">
+        <input type="text" class="form-control" placeholder="Search...">
+        <button type="submit" class="btn btn-primary">Search</button>
+      </form>
+
+      <!-- NEW TICKET -->
+      <ul class="nav navbar-nav navbar-right">
+        <li class="dropdown">
+            <a href="#" class="dropdown-toggle m_right" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">New ticket <span class="caret"></span></a>
+            <ul class="dropdown-menu">
+        <li><p>
+            <b>Create quick ticket:</b>
+            </br>
+            Subject: <input id="sub" type="text" placeholder="Subject">
+            Text: <input id="text" type="text" placeholder="Text here">
+        <ul><li><a href="#">Advanced Ticket Creation</a></li></ul>
+        <button type="button" onclick="onCreateClick()">create</button>
+        </p></li>
+        </ul>
+    </li>
+  </ul>
+
+  </div>
+  
+</nav>
+
     <!--
     SIDEBAR
     -->
@@ -418,9 +483,6 @@
     </div>
   </div>
 
-
-<p id="demo"></p>
-
 <script>
 
     function actionButton(ticketId, action, ticketStatus){
@@ -439,9 +501,6 @@
             strReq = stalledButton(ticketId);
         }else if(action==='forward'){
             strReq = forwardButton(ticketId, ticketStatus);
-        }
-        if (strReq != null) {
-            document.getElementById("demo").innerHTML = "strReq:"+strReq;
         }
         request.open("GET", strReq, true);
         request.send();
@@ -472,12 +531,42 @@
         }
     }
 
-    function createButton(){
-        var request = new XMLHttpRequest();
-        request.onload = function(){window.location.reload()}
-        request.open("POST",'/ticket?o={{username_id}}&email={{email}}',true);
-        request.send(document.getElementById('sub').value + '\n' + document.getElementById('text').value);
+    function onCreateClick(){
+        data = {
+                    subject: document.getElementById('sub').value,
+                    text: document.getElementById('text').value
+                };
+        $.ajax({
+                type: "POST",
+                url: "/ticket",
+                data: JSON.stringify(data),
+                contentType: "application/json",
+                success: function (data) {
+                    window.location.reload();
+                },
+                statusCode: {
+                    500: function() {
+                        window.location.reload();
+                        alert('Unable to create the ticket');
+                      }
+                }
+            });
     }
+
+    function onLogoutClick() {
+            $.ajax({
+                type: "DELETE",
+                url: "/auth",
+                data: "{}",
+                contentType: "application/json",
+                complete: function (data, textStatus) {
+                    console.log("complete.statusCode=" + data.statusCode);
+                },
+                success: function (data) {
+                    window.location.href = "/login";
+                }
+            });
+        }
 </script>
 <!-- ____________________________________________________________________________________ -->
     <script src="/static/res/js/jquery/jquery-1.11.3.min.js"></script>
@@ -486,7 +575,5 @@
 	<script src="/static/res/bootstrap-table/bootstrap-table.js"></script>
  	<!-- Populate Grid -->
  	<script src="/static/res/js/my-tickets-tables.js"></script>
-	<script>
-	</script>
   </body>
 </html>

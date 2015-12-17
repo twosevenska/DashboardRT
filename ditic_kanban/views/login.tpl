@@ -37,7 +37,7 @@
     </div>
 
 <!-- ____________________________________________________________________________________ -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script src="static/res/js/jquery/jquery-1.11.3.min.js"></script>">
     <script src="static/res/js/bootstrap.min.js"></script>
     <script src="static/res/js/ie10-viewport-bug-workaround.js"></script>
     <script src="static/res/js/ie-emulation-modes-warning.js"></script>
