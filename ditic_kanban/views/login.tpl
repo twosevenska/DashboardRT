@@ -8,13 +8,10 @@
     <meta name="description" content="Dashboard RT - Logic Box">
     <meta name="author" content="Alexandre Vieira, André Martinez, Eduardo Pereira, Gloriya Gostyaeva, Gonçalo Barroso, Roberto Cunha">
 
-    <title>Logic Box</title>
+    <title>CIUC Kanban</title>
 
     <link href="static/css/bootstrap.min.css" rel="stylesheet">
     <link href="static/css/cover.css" rel="stylesheet">
-    <script src="static/js/ie-emulation-modes-warning.js"></script>
-
-
   </head>
 
   <body>
@@ -51,6 +48,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
     <script src="static/js/bootstrap.min.js"></script>
     <script src="static/js/ie10-viewport-bug-workaround.js"></script>
+    <script src="static/js/ie-emulation-modes-warning.js"></script>
     <script>
         function onKeyPress(thisArg, theEvent) {
           if (theEvent.keyCode == 13) {

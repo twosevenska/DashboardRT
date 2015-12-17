@@ -1,4 +1,4 @@
-% rebase('skin')
+% include('navigator')
 
 <p>
     % username = get('username', '')
