@@ -228,18 +228,14 @@ def ticket_actions(rt_object, ticket_id, action, ticket_email, user_email):
                 }
             )
         elif ticket_line['status'] == 'new':
-            temp = DITICConfig()
-            email_limit = temp.get_email_limits(ticket_line['owner'])
-            print ("val :::: ", str(get_dir_inbox_num()))
-            if get_dir_inbox_num() < email_limit['dir-inbox']:
-                result = modify_ticket(
-                    rt_object,
-                    ticket_id,
-                    {
-                        'owner': 'nobody',
-                        'cf.{is - informatica e sistemas}': 'dir-inbox',
-                    }
-                )
+            result = modify_ticket(
+                rt_object,
+                ticket_id,
+                {
+                    'owner': 'nobody',
+                    'cf.{is - informatica e sistemas}': 'dir-inbox',
+                }
+            )
         elif ticket_line['status'] == 'open':
             result = modify_ticket(
                 rt_object,

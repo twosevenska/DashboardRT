@@ -14,7 +14,7 @@
     <link href="static/res/css/cover.css" rel="stylesheet">
   </head>
 
-  <body>
+  <body background="static/res/img/background.png" style="background-repeat: repeat;">
     <div class="site-wrapper">
       <div class="site-wrapper-inner">
         <div class="cover-container">

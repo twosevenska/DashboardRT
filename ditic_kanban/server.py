@@ -140,7 +140,29 @@ def get_board():
 
             result.update({'urgent': get_urgent_tickets(rt_object)})
             result.update({'time_spent': '%0.2f seconds' % (time() - start_time)})
-            return template('board1', result)
+            return template('board', result)
+        else:
+            del_auth()
+            redirect('/login')
+    else:
+        redirect('/login')
+
+@route('/user')
+def get_board():
+    start_time = time()
+    user_id = request.get_cookie('account', secret='secret')
+    if user_id:
+        if user_id in user_auth.ids.keys():
+            result = create_default_result()
+            result.update({'username': result['alias'][user_auth.get_email_from_id(user_id)]})
+            result.update({'username_id': user_id})
+            
+            today = date.today().isoformat()
+            result.update({'statistics':get_statistics(get_date(30,today),today)})
+
+            result.update({'urgent': get_urgent_tickets(rt_object)})
+            result.update({'time_spent': '%0.2f seconds' % (time() - start_time)})
+            return template('board', result)
         else:
             del_auth()
             redirect('/login')
@@ -167,7 +189,6 @@ def get_admin_board():
                 user_auth.get_rt_object_from_email(
                     user_auth.get_email_from_id(user_id)
                  ), 'dir-inbox')})
-            pp.pprint(result)
             return template('income', result)
         else:
             del_auth()
@@ -265,7 +286,7 @@ def ticket_action(ticket_id, action):
                     ),
                     ticket_id,
                     action,
-                    user_auth.get_email_from_id(user_id),
+                    request.json.get('ticketmail'),
                     user_auth.get_email_from_id(user_id)
                     )
                 response.status = 200
@@ -279,6 +300,89 @@ def ticket_action(ticket_id, action):
             redirect('/login')
     else:
         redirect('/login')
+
+@get('/ticket/<ticket_id:int>')
+def get_ticket_details(ticket_id):
+    start_time = time()
+    try:
+    	user_id = request.get_cookie('account', secret='secret')
+    except AttributeError as e:
+        print("AttributeError=" + str(e))
+        response.status = 500
+        return
+    if user_id:
+        if user_id in user_auth.ids.keys():
+            try:
+                result = create_default_result()
+                result.update({'username': user_auth.get_email_from_id(user_id)})
+                result.update({'email': search})
+                result.update({'username_id': user_id})
+                result.update({'ticket_id': ticket_id})
+
+                rt_api = user_auth.get_rt_object_from_email(user_auth.get_email_from_id(user_id))
+                details = fetch_ticket_details(rt_api, ticket_id)
+                result.update(details)
+                history = fetch_ticket_brief_history(rt_api, ticket_id)
+                result.update({'history': history})
+                result.update({'time_spent': '%0.2f seconds' % (time() - start_time)})
+                response.status = 200
+                return template('ticket_details', result)
+            except AttributeError as e:
+                print("AttributeError=" + str(e))
+                response.status = 500
+                return
+        else:
+            del_auth()
+            redirect('/login')
+    else:
+        redirect('/login')
+
+@post('/search')
+def search():
+    start_time = time()
+    try:
+        user_id = request.get_cookie('account', secret='secret')
+    except AttributeError as e:
+        print("AttributeError=" + str(e))
+        response.status = 500
+        return
+    if user_id:
+        if user_id in user_auth.ids.keys():
+            try:
+                result = create_default_result()
+                result.update({'username': user_auth.get_email_from_id(user_id)})
+                result.update({'email': search})
+                result.update({'username_id': user_id})
+
+                result.update(search_tickets(
+                    user_auth.get_rt_object_from_email(
+                        user_auth.get_email_from_id(user_id)
+                    ), search))
+
+                result.update({'time_spent': '%0.2f seconds' % (time() - start_time)})
+                response.status = 200
+                return template('search', result)
+            except AttributeError as e:
+                print("AttributeError=" + str(e))
+                response.status = 500
+                return
+        else:
+            del_auth()
+            redirect('/login')
+    else:
+        redirect('/login')
+    start_time = time()
+
+    result = create_default_result()
+    if request.query.o == '' or not user_auth.check_id(request.query.o):
+        result.update({'message': ''})
+        return template('auth', result)
+
+    if not request.forms.get('search'):
+        redirect('/?o=%s' % request.query.o)
+    search = request.forms.get('search')
+
+    
 ################################################################
 #   NOT REWORKED
 ################################################################
@@ -336,70 +440,6 @@ def email_detail(email):
     return template('ticket_list', result)
 
 
-@post('/search')
-def search():
-    start_time = time()
-
-    result = create_default_result()
-    if request.query.o == '' or not user_auth.check_id(request.query.o):
-        result.update({'message': ''})
-        return template('auth', result)
-
-    if not request.forms.get('search'):
-        redirect('/?o=%s' % request.query.o)
-    search = request.forms.get('search')
-
-    result.update({'username': user_auth.get_email_from_id(request.query.o)})
-    result.update({'email': search})
-    result.update({'username_id': request.query.o})
-
-    result.update(search_tickets(
-        user_auth.get_rt_object_from_email(
-            user_auth.get_email_from_id(request.query.o)
-        ), search))
-
-    # Is there any URGENT ticket?
-    result.update({'urgent': get_urgent_tickets(rt_object)})
-
-    result.update({'time_spent': '%0.2f seconds' % (time() - start_time)})
-    return template('search', result)
-
-@get('/ticket/<ticket_id:int>')
-def get_ticket_details(ticket_id):
-    start_time = time()
-    try:
-    	user_id = request.get_cookie('account', secret='secret')
-    except AttributeError as e:
-        print("AttributeError=" + str(e))
-        response.status = 500
-        return
-    if user_id:
-        if user_id in user_auth.ids.keys():
-            try:
-                result = create_default_result()
-                result.update({'username': user_auth.get_email_from_id(user_id)})
-                result.update({'email': search})
-                result.update({'username_id': user_id})
-                result.update({'ticket_id': ticket_id})
-
-                rt_api = user_auth.get_rt_object_from_email(user_auth.get_email_from_id(user_id))
-                details = fetch_ticket_details(rt_api, ticket_id)
-                result.update(details)
-                history = fetch_ticket_brief_history(rt_api, ticket_id)
-                result.update({'history': history})
-                result.update({'time_spent': '%0.2f seconds' % (time() - start_time)})
-                response.status = 200
-                return template('ticket_details', result)
-            except AttributeError as e:
-                print("AttributeError=" + str(e))
-                response.status = 500
-                return
-        else:
-            del_auth()
-            redirect('/login')
-    else:
-        redirect('/login')
-
 
 @get('/ticket/<ticket_id:int>/history/<item_id:int>')
 def get_history_item_details(ticket_id, item_id):
@@ -452,5 +492,5 @@ class SummaryGenerator(threading.Thread):
 
 def start_server():
     generate_summary_file()
-    SummaryGenerator(5).start()
+    SummaryGenerator(30).start()
     run(server='paste', host='0.0.0.0', debug=True)

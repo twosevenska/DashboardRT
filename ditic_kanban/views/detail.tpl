@@ -42,9 +42,9 @@
         </li>
       </ul>
       <!-- SEARCH -->
-      <form class="navbar-form navbar-right">
-        <input type="text" class="form-control" placeholder="Search...">
-        <button type="submit" class="btn btn-primary">Search</button>
+      <form id="form1" class="navbar-form navbar-right">
+        <input id="inBtn" type="text" class="form-control" placeholder="Search..." />
+        <button id="sBtn" type="button" class="btn btn-primary"action="clickSearch()">Search</button>
       </form>
 
       <!-- NEW TICKET -->
@@ -79,6 +79,14 @@
     <nav class="main-menu">
       <div class="sidebar">
         <div id="title" align="center"><h2>DIR-INBOX</h2></div>
+        <div align="center">
+            % status = 'dir-inbox'
+            (max:
+            % if status in email_limit:
+                {{email_limit[status]}}
+            % end
+            )
+        </div>
         <div class="chatlist" style="margin-left:7px; margin-right:7px; ">
         <table data-toggle="table" class="dir-inbox-table" data-show-header="false">
             <thead>
@@ -113,8 +121,8 @@
                     <button onclick="actionButton({{ticket['id']}}, 'increase_priority')" type="button">
                             <span class="glyphicon glyphicon-menu-up" aria-hidden="true"></span>
                     </button>
-                    % end
                     </td><td>
+                    % end
                     <button onclick="clickTicket({{ticket['id']}});" type="button">
                         {{ticket['id']}} {{ticket['subject']}}
                     </button>
@@ -146,16 +154,19 @@
                         <button onclick="actionButton({{ticket['id']}}, 'set_urgent')" title="Make ticket Urgent">
                             <span class="glyphicon glyphicon-fire" aria-hidden="true"></span>
                         </button>
-                        </td><td>
+                    </td><td>
                     %end
-                    <button onclick="actionButton({{ticket['id']}}, 'take')">
-                        <span class="glyphicon glyphicon-hand-right" aria-hidden="true"></span>
-                    </button>
-                    </td>
+                    %if number_tickets_per_status['new'] < email_limit['new']:
+                        <button onclick="actionButton({{ticket['id']}}, 'take')" type="button">
+                            <span class="glyphicon glyphicon-hand-right" aria-hidden="true"></span></button>
+                    %else:
+                        <span class="glyphicon glyphicon-minus-sign" aria-hidden="true"></span>
                     % end
-                %   end
-                            
-                </tr>
+                    </td>      
+                
+                    </tr>
+                    %end
+                %end
             </tbody>
         </table>
         </div>
@@ -234,20 +245,14 @@
                 %       continue
                 %   end
                     % for priority in sorted(tickets[status], reverse=True):
-                    <tr><td>
                     % for ticket in tickets[status][priority]:
                     <tr><td>
-                    % if ticket['kanban_actions']['interrupted']:
-                    <button onclick="actionButton({{ticket['id']}}, 'interrupted')" type="button">
-                            <span class="glyphicon glyphicon-ban-circle" aria-hidden="true"></span>
-                    </button>
-                    % end
                     % if ticket['kanban_actions']['increase_priority']:
                     <button onclick="actionButton({{ticket['id']}}, 'increase_priority')" type="button">
                             <span class="glyphicon glyphicon-menu-up" aria-hidden="true"></span>
                     </button>
-                    % end
                     </td><td>
+                    % end
                     <button onclick="clickTicket({{ticket['id']}});">
                         {{ticket['id']}} {{ticket['subject']}}
                     </button>
@@ -271,22 +276,20 @@
                     </td><td>
                     % end
                     % if ticket['kanban_actions']['back']:
-                    <button onclick="actionButton({{ticket['id']}}, 'back')" type="button">
-                            <span class="glyphicon glyphicon-flash" aria-hidden="true"></span>
-                    </button>
-                    </td>
+                        <button onclick="actionButton({{ticket['id']}}, 'back')" type="button">
+                                <span class="glyphicon glyphicon-flash" aria-hidden="true"></span>
+                        </button>
+                        
                     % else:
-                            <span class="glyphicon glyphicon-minus-sign" aria-hidden="true"></span>
-                            </td>
+                        <span class="glyphicon glyphicon-minus-sign" aria-hidden="true"></span>
+                        
                     % end
-                    % end
-                %   end
-                % end
-                </tr>
-                
+                    </tr>
+                %end
+                %end
+            % end
             </tbody>
         </table>
-
 	  </div>
 	  <div class="col-md-3">
 		<table data-toggle="table" class="in-table" data-show-header="false">
@@ -301,62 +304,65 @@
             </thead>
             <tbody>
                 % for status in ['new']:
-
-                    %   if status not in tickets.keys():
-                    %       continue
-                    %   end
-
+                %   if status not in tickets.keys():
+                %       continue
+                %   end
                     % for priority in sorted(tickets[status], reverse=True):
-                        % for ticket in tickets[status][priority]:
-                        <tr><td>
-                        % if ticket['kanban_actions']['back']:
-                        <button onclick="actionButton({{ticket['id']}}, 'back')" type="button">
+                    % for ticket in tickets[status][priority]:
+                    <tr><td>
+                    %sts = 'dir-inbox'
+                    % if sts in email_limit:
+                    % if email_limit.get(sts) > number_tickets_per_status.get(sts):
+                    <button onclick="actionButton({{ticket['id']}}, 'back')" type="button">
                             <span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span>
-                        </button>
-                        </td><td>
-                        % end
-                        % if ticket['kanban_actions']['interrupted']:
-                        <button onclick="actionButton({{ticket['id']}}, 'interrupted')" type="button">
-                            <span class="glyphicon glyphicon-ban-circle" aria-hidden="true"></span>
-                        </button>
-                        </td><td>
-                        % end
-                        % if ticket['kanban_actions']['increase_priority']:
-                        <button onclick="actionButton({{ticket['id']}}, 'increase_priority')" type="button">
-                            <span class="glyphicon glyphicon-menu-up" aria-hidden="true"></span>
-                        </button>
-                        </td><td>
-                        % end
-                        <button onclick="clickTicket({{ticket['id']}});">
-                            {{ticket['id']}} {{ticket['subject']}}
-                        </button>
-                        </td><td>
-                        % if ticket['kanban_actions']['decrease_priority']:
-                        <button onclick="actionButton({{ticket['id']}}, 'decrease_priority')" type="button">
-                            <span class="glyphicon glyphicon-menu-down" aria-hidden="true"></span>
-                        </button>
-                        </td><td>
-                        % end
-                        % if ticket['kanban_actions']['stalled']:
-                        <button onclick="actionButton({{ticket['id']}}, 'stalled')" type="button">
-                            <span class="glyphicon glyphicon-time" aria-hidden="true"></span></button>
-                        </td><td>
-                        % end
-                        % if ticket['kanban_actions']['forward']:
-                        <button onclick="actionButton({{ticket['id']}}, 'forward', '{{ticket['status']}}')" type="button">
-                            <span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span></button>
-                        % else:
-                            <span class="glyphicon glyphicon-minus-sign" aria-hidden="true"></span>
-                        % end
-                        % end
-                        </td></tr>
+                    </button>
+                    </td><td>
+                    % else:
+                        <span class="glyphicon glyphicon-minus-sign" aria-hidden="true"></span>
+                    </td><td>
                     % end
-                % end
+                    %end
+                    % if ticket['kanban_actions']['increase_priority']:
+                    <button onclick="actionButton({{ticket['id']}}, 'increase_priority')" type="button">
+                            <span class="glyphicon glyphicon-menu-up" aria-hidden="true"></span>
+                    </button>
+                    </td><td>
+                    % end
+                    <button onclick="clickTicket({{ticket['id']}});">
+                        {{ticket['id']}} {{ticket['subject']}}
+                    </button>
+                    </td><td>
+                    % if ticket['kanban_actions']['decrease_priority']:
+                    <button onclick="actionButton({{ticket['id']}}, 'decrease_priority')" type="button">
+                            <span class="glyphicon glyphicon-menu-down" aria-hidden="true"></span>
+                    </button>
+                    </td><td>
+                    % end
+                    % if ticket['kanban_actions']['stalled']:
+                    <button onclick="actionButton({{ticket['id']}}, 'stalled')" type="button">
+                            <span class="glyphicon glyphicon-time" aria-hidden="true"></span>
+                    </button>
+                    </td><td>
+                    % end
+                    % if ticket['kanban_actions']['forward']:
+                    <button onclick="actionButton({{ticket['id']}}, 'forward', '{{ticket['status']}}')" type="button">
+                            <span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span>
+                    </button>
+                    % else:
+                        <span class="glyphicon glyphicon-minus-sign" aria-hidden="true"></span>
+                        
+                    % end
+                    </td>
+
+                    </tr>
+                
+                %   end
+            % end
             </tbody>
         </table>
 	 </div>
 	  <div class="col-md-3">
-		<table data-toggle="table" class="in-table" data-show-header="false">
+		<table data-toggle="table" class="active-table" data-show-header="false">
             <thead>
                 <tr>
                     <th data-valign="middle"></th>
@@ -381,8 +387,9 @@
                             <span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span>
                         </button>
                         </td><td>
-                        % else:
+                        % else: 
                             <span class="glyphicon glyphicon-minus-sign" aria-hidden="true"></span>
+                        </td><td>
                         % end
                         % if ticket['kanban_actions']['increase_priority']:
                         <button onclick="actionButton({{ticket['id']}}, 'increase_priority')" type="button">
@@ -447,7 +454,7 @@
                         % end
                         <button onclick="clickTicket({{ticket['id']}});">
                         {{ticket['id']}} {{ticket['subject']}}
-                    </button></tr></td>
+                        </button></tr></td>
                         % if ticket['kanban_actions']['decrease_priority']:
                         <button onclick="actionButton({{ticket['id']}}, 'decrease_priority')">v</button>
                         % end
@@ -469,82 +476,25 @@
 
 <script>
     function actionButton(ticketId, action, ticketStatus){
-        var request = new XMLHttpRequest();
-        request.onload = function(){window.location.reload()}
-
-        if(action==='back'){
-            strReq = backButton(ticketId);
-        }else if(action==='interrupted'){
-            strReq = interruptedButton(ticketId);
-        }else if(action==='increase_priority'){
-            strReq = increasePriorityButton(ticketId);
-        }else if(action==='decrease_priority'){
-            strReq = decreasePriorityButton(ticketId);
-        }else if(action==='stalled'){
-            strReq = stalledButton(ticketId);
-        }else if(action==='forward'){
-            if(ticketStatus==='open'){
-                forwardButton(ticketId);
-                return;
-            }else{
-                strReq = '/ticket/'+ticketId+'/action/forward';
-            }
-        }else if(action==='set_urgent'){
-            strReq = setUrgentButton(ticketId, ticketStatus);
-        }else if(action==='unset_urgent'){
-            strReq = unsetUrgentButton(ticketId, ticketStatus);
-        }else if(action === 'take'){
-            strReq = takeButton(ticketId)
+        if(ticketStatus=='open'){
+            str = prompt("Enter conclusion condition:", "");
+            while(str.length < 4){str = prompt("Enter conclusion condition:", "It is needed at least 4 characters.");}
         }
-
-        request.open("PUT", strReq, true);
-        request.send();
-    }
-
-    function backButton(ticketId){
-        return '/ticket/'+ticketId+'/action/back?o={{username_id}}&email={{email}}';
-    }
-    function interruptedButton(ticketId){
-        return '/ticket/'+ticketId+'/action/interrupted?o={{username_id}}&email={{email}}';
-    }
-    function increasePriorityButton(ticketId){
-        return '/ticket/'+ticketId+'/action/increase_priority?o={{username_id}}&email={{email}}';
-    }
-    function decreasePriorityButton(ticketId){
-        return '/ticket/'+ticketId+'/action/decrease_priority?o={{username_id}}&email={{email}}';
-    }
-    function stalledButton(ticketId){
-        return '/ticket/'+ticketId+'/action/stalled?o={{username_id}}&email={{email}}';
-    }
-    function takeButton(ticketId){
-        return '/ticket/'+ticketId+'/action/take';
-    }
-    function unsetUrgentButton(ticketId){
-        return '/ticket/'+ticketId+'/action/unset_urgent';
-    }
-    function setUrgentButton(ticketId){
-        return '/ticket/'+ticketId+'/action/set_urgent';
-    }
-    function forwardButton(ticketId){
-
-        str = prompt("Enter conclusion condition:", "");
-        while(str.length < 4){str = prompt("Enter conclusion condition:", "It is needed at least 4 characters.");}
-        
         $.ajax({
-                type: "PUT",
-                url: "/ticket/"+ticketId+"/action/forward-"+str,
-                data: "{}",
-                contentType: "application/json",
-                success: function (data) {
+            type: "PUT",
+            url: "/ticket/"+ticketId+"/action/"+action,
+            data: JSON.stringify({'ticketmail':ticketStatus}),
+            contentType: "application/json",
+            success: function (data) {
+                window.location.reload();
+            },
+            statusCode: {
+                500: function() {
                     window.location.reload();
-                },
-                statusCode: {
-                    500: function() {
-                        window.location.reload();
-                        alert('Unable to mark ticket as done');
-                      }
-                }
-            });
+                    alert('Unable to resolve action');
+                  }
+            }
+        });
     }
 
     function onCreateClick(){
@@ -595,12 +545,28 @@
                 }
             });
         }
+    function clickSearch(ticketId) {
+            var form = document.getElementById("form1");
+            dat = form.submit();
+             $.ajax({
+            type: "POST",
+            url: "/search",
+            data: JSON.stringify(dat),
+            contentType: "application/json",
+            complete: function (data, textStatus) {
+                console.log("complete.statusCode=" + data.statusCode);
+            },
+            success: function (data) {
+                window.location.href = "/search";
+            }
+        });
+        }
 </script>
 <!-- ____________________________________________________________________________________ -->
     <script src="/static/res/js/jquery/jquery-1.11.3.min.js"></script>
     <script src="/static/res/js/bootstrap.min.js"></script>
-    <script src="/static/res/js/ie10-viewport-bug-workaround.js"></script>
 	<script src="/static/res/bootstrap-table/bootstrap-table.js"></script>
+    <script src="/static/res/js/ie10-viewport-bug-workaround.js"></script>
  	<!-- Populate Grid -->
  	<script src="/static/res/js/my-tickets-tables.js"></script>
   </body>

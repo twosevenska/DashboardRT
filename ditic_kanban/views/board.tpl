@@ -91,21 +91,18 @@
 
     <title>DITIC Kanban</title>
 
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
-
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
-
-  <link rel="stylesheet" href="static/res/css/navbar.css">
-
-
+    <link href="static/res/css/bootstrap-theme.min.css" rel="stylesheet">
+    <link href="static/res/css/bootstrap.min.css" rel="stylesheet">
+    <script src="static/res/js/ie-emulation-modes-warning.js"></script>
     % graph_script = get('graph_script', '')
     % if graph_script:
     {{!graph_script}}
     % end
   </head>
-
-  <body background="static/res/img/background.png" style="background-repeat: repeat;">
-    <!-- FIXED NAVBAR-->
+<body>
+<img class="img-responsive" src="/static/res/img/background.png" style="position:fixed;top:0px;left:0px;width: 100%;z-index:-1;" />
+    <!-- FIXED NAVBAR
+    -->
     <nav class="navbar navbar-inverse navbar-fixed-top">
       <div class="navbar-collapse collapse">
         <ul class="nav navbar-nav navbar-left">
@@ -131,7 +128,7 @@
           <!-- SEARCH -->
           <form class="navbar-form navbar-right">
             <input type="text" class="form-control" placeholder="Search...">
-            <button type="submit">Search</button>
+            <button type="submit" class="btn btn-primary">Search</button>
           </form>
           <!-- NEW TICKET -->
           <ul class="nav navbar-nav navbar-right">
@@ -145,16 +142,16 @@
                     Subject: <input id="sub" type="text" placeholder="Subject">
                     Text: <input id="text" type="text" placeholder="Text here">
                     <!--<ul><li><a href="#">Advanced Ticket Creation</a></li></ul>-->
-                    <button type="submit">create</button>
+                    <button type="submit" class="btn btn-primary" onclick="onCreateClick()">Create</button>
                   </p>
                 </li>
               </ul>
             </li>
           </ul>
       </div>
-    </nav>-->
+    </nav>
 
-<br><br><br>
+<br><br><br>br><br>
 
 
 <div class="col-md-8">
@@ -162,52 +159,60 @@
 
 <div class="panel panel-default">  
 <div class="panel-heading">DITIC Kanban Board </div> 
-<div class="panel-body"> 
-
-           <a href="/income">DIR</a> = 
-            % # DIR
-            % sum = 0
-            % # we need this code because DIR can have tickets all along several status
-            % for status in summary['dir']:
-            %   sum += summary['dir'][status]
-            % end
-            {{sum}}
-            <a href="/income">DIR-INBOX</a> =
-         
-            % # DIR-INBOX
-            % sum = 0
-            % # we need this code because DIR can have tickets all along several status
-            % for status in summary['dir-inbox']:
-            %   sum += summary['dir-inbox'][status]
-            % end
-            {{sum}}
-                % urgent = get('urgent', '')
-                % if urgent:
-                <table border="1">
-                    <td align="center">
-                        URGENT<br>
-                        <br>
-                        % for ticket_info in urgent:
-                        <audio autoplay="autoplay">
-                           <source src="/static/alert1.mp3" />
-                       </audio>
-                       <a href="http://domo-kun.noip.me/rt/Ticket/Display.html?id={{ticket_info['id']}}">
-                        {{ticket_info['subject']}}
-                    </a>
+<div class="panel-body">
+    <div class="col-md-4">
+      <p><a href="/income">DIR</a></h4> = 
+        % # DIR
+        % sum = 0
+        % # we need this code because DIR can have tickets all along several status
+        % for status in summary['dir']:
+        %   sum += summary['dir'][status]
+        % end
+        {{sum}}</p>
+       <p><a href="/income">DIR-INBOX</a> = 
+        % # DIR-INBOX
+        % sum = 0
+        % # we need this code because DIR can have tickets all along several status
+        % for status in summary['dir-inbox']:
+        %   sum += summary['dir-inbox'][status]
+        % end
+        {{sum}}</p>
+    </div>
+    <div class="col-md-8">
+          % urgent = get('urgent', '')
+          % if urgent:
+              <audio autoplay="autoplay">
+                <source src="/static/alert1.mp3" />
+              </audio>
+              <div class="panel panel-danger">
+                <div class="panel-heading">
+                <h3 class="panel-title" align="center">URGENT</h3>
+                </div>
+                <div class="panel-body" align="center">
+                  
+                  % for ticket_info in urgent:
+                  <div class="row">
+                    <div class="btn-group" role="group">
+                    <button type="button" onclick="clickTicket({{ticket_info['id']}})" class="btn btn-default">
+                      {{ticket_info['subject']}}
+                    </button>
                     % if username:
-                    <a href="/ticket/{{ticket_info['id']}}/action/take">(take)</a>
+                     <button type="button" onclick="actionButton({{ticket_info['id']}}, 'take')" class="btn btn-default">
+                      <span class="glyphicon glyphicon-hand-right" aria-hidden="true"></span>
+                     </button>
                     % end
+                    </div>
                     % end
-                </td>
-            </table>
-            <br>
-            % end
-        </td>
-  </div>  
+                    </div>
+                </div>
+              </div>
+          </div>
+      </div>
+  <br>  
   <table class="table"> 
     <thead> 
       <tr> 
-        <th>USER</th> 
+        <th>user</th> 
         <th>IN</th> 
         <th>ACTIVE</th> 
         <th>STALLED</th> 
@@ -250,12 +255,80 @@
     <br>
     <div id="mean_time_to_resolve" style="width: 600px; height: 400px"></div>
 </div>
+<script>
+    function actionButton(ticketId, action, ticketStatus){
+        
+        $.ajax({
+            type: "PUT",
+            url: "/ticket/"+ticketId+"/action/"+action,
+            data: JSON.stringify({'ticketmail':ticketStatus}),
+            contentType: "application/json",
+            success: function (data) {
+                window.location.reload();
+            },
+            statusCode: {
+                500: function() {
+                    window.location.reload();
+                    alert('Unable to resolve action');
+                  }
+            }
+        });
+    }
 
-<!-- ____________________________________________________________________________________ -->
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+    function onCreateClick(){
+        data = {
+                    subject: document.getElementById('sub').value,
+                    text: document.getElementById('text').value
+                };
+        $.ajax({
+                type: "POST",
+                url: "/ticket",
+                data: JSON.stringify(data),
+                contentType: "application/json",
+                success: function (data) {
+                    window.location.reload();
+                },
+                statusCode: {
+                    500: function() {
+                        window.location.reload();
+                        alert('Unable to create the ticket');
+                      }
+                }
+            });
+    }
+
+    function onLogoutClick() {
+            $.ajax({
+                type: "DELETE",
+                url: "/auth",
+                data: "{}",
+                contentType: "application/json",
+                complete: function (data, textStatus) {
+                    console.log("complete.statusCode=" + data.statusCode);
+                },
+                success: function (data) {
+                    window.location.href = "/login";
+                }
+            });
+        }
+    function clickTicket(ticketId) {
+            $.ajax({
+                type: "GET",
+                url: "/ticket/"+ticketId,
+                complete: function (data, textStatus) {
+                    console.log("complete.statusCode=" + data.statusCode);
+                },
+                success: function (data) {
+                    window.location.href = "/ticket/"+ticketId;
+                }
+            });
+        }
+</script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     
-  <script src="/static/res/js/ie10-viewport-bug-workaround.js"></script>
-  <script src="/static/res/bootstrap-table/bootstrap-table.js"></script>
+    <script src="/static/res/js/bootstrap.min.js"></script>
+    <script src="static/res/js/holder.min.js"></script>
+    <script src="static/res/js/ie10-viewport-bug-workaround.js"></script>
   </body>
 </html>
 
