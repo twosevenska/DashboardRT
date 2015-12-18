@@ -45,6 +45,7 @@ class DITICConfig:
         dir_limit = 7
         self.email_to_user = {
             'vapi@uc.pt': 'vapi',
+            'dir-inbox': 'dir-inbox',
             'edd@uc.pt': 'edd',
             'root@uc.pt': 'root',
             'alexandre@uc.pt': 'alexandre',
@@ -55,6 +56,13 @@ class DITICConfig:
         }
         self.email_limits = {
             'vapi@uc.pt': {
+                'dir-inbox': dir_limit,
+                'new': 4,
+                'open': 1,
+
+                'rejected': 7,
+            },
+            'dir-inbox': {
                 'dir-inbox': dir_limit,
                 'new': 4,
                 'open': 1,
@@ -170,6 +178,7 @@ class DITICConfig:
         :return: If status is provided, then return that status limits (int).
                  If no status is required, then return the dictionary with all limits
         """
+        print("email-"+email)
         if status:
             if email not in self.email_limits.keys() or status not in self.email_limits[email]:
                 return 0

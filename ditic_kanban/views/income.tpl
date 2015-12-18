@@ -110,13 +110,21 @@
                             </button>
                             </td><td>
                         % end
-                        % if ticket['kanban_actions']['forward']:
-                            <button onclick="actionButton({{ticket['id']}}, 'forward', '{{ticket['status']}}')" type="button">
-                                    <span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span>
-                            </button>
-                        % else:
-                            <span class="glyphicon glyphicon-minus-sign" aria-hidden="true"></span> 
-                        % end
+                        % sts = 'dir-inbox'
+                        % if sts in dirinbox['email_limit']:
+                                % if dirinbox['email_limit'][sts] > dirinbox['number_tickets_per_status'][sts]:
+                                    <button onclick="actionButton({{ticket['id']}}, 'forward', 'dir')" type="button">
+                                            <span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span>
+                                    </button>
+                                % else:
+                                    <span class="glyphicon glyphicon-minus-sign" aria-hidden="true"></span>
+                                % end
+                            %else:
+                                <button onclick="actionButton({{ticket['id']}}, 'forward', 'dir')" type="button">
+                                            <span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span>
+                                    </button>
+                            %end
+                        
                         </td></tr>
                     
                     %end
@@ -138,7 +146,7 @@
                 % for priority in sorted(dirinbox['tickets'], reverse=True):
                     % for ticket in dirinbox['tickets'][priority]:
                         <tr><td>
-                        <button onclick="actionButton({{ticket['id']}}, 'back', '{{ticket['status']}}')" type="button">
+                        <button onclick="actionButton({{ticket['id']}}, 'back', 'dir-inbox')" type="button">
                             <span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span>
                         </button>
                         </td><td>

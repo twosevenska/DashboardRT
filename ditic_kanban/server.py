@@ -189,6 +189,7 @@ def get_admin_board():
                 user_auth.get_rt_object_from_email(
                     user_auth.get_email_from_id(user_id)
                  ), 'dir-inbox')})
+            pp.pprint(result)
             return template('income', result)
         else:
             del_auth()

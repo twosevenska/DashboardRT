@@ -91,9 +91,10 @@
 
     <title>DITIC Kanban</title>
 
+    
     <link href="static/res/css/bootstrap-theme.min.css" rel="stylesheet">
     <link href="static/res/css/bootstrap.min.css" rel="stylesheet">
-    <script src="static/res/js/ie-emulation-modes-warning.js"></script>
+    <link href="static/res/css/bootstrap-table/bootstrap-table.css" rel="stylesheet">
     % graph_script = get('graph_script', '')
     % if graph_script:
     {{!graph_script}}
@@ -151,7 +152,7 @@
       </div>
     </nav>
 
-<br><br><br>br><br>
+<br><br><br><br><br>
 
 
 <div class="col-md-8">
@@ -179,35 +180,38 @@
         {{sum}}</p>
     </div>
     <div class="col-md-8">
-          % urgent = get('urgent', '')
-          % if urgent:
-              <audio autoplay="autoplay">
-                <source src="/static/alert1.mp3" />
-              </audio>
-              <div class="panel panel-danger">
-                <div class="panel-heading">
-                <h3 class="panel-title" align="center">URGENT</h3>
-                </div>
-                <div class="panel-body" align="center">
-                  
-                  % for ticket_info in urgent:
-                  <div class="row">
-                    <div class="btn-group" role="group">
-                    <button type="button" onclick="clickTicket({{ticket_info['id']}})" class="btn btn-default">
-                      {{ticket_info['subject']}}
-                    </button>
-                    % if username:
-                     <button type="button" onclick="actionButton({{ticket_info['id']}}, 'take')" class="btn btn-default">
-                      <span class="glyphicon glyphicon-hand-right" aria-hidden="true"></span>
-                     </button>
-                    % end
-                    </div>
-                    % end
-                    </div>
-                </div>
+      % urgent = get('urgent', '')
+      % if urgent:
+      <audio autoplay="autoplay">
+        <source src="/static/alert1.mp3" />
+      </audio>
+      <div class="panel panel-danger">
+        <div class="panel-heading">
+          <h3 class="panel-title" align="center">URGENT</h3>
+        </div>
+        <div class="panel-body" align="center">
+          % for ticket_info in urgent:
+            <div class="row">
+              <div class="btn-group" role="group">
+                <button type="button" onclick="clickTicket({{ticket_info['id']}})" class="btn btn-default">
+                  %if ticket_info['subject']:
+                    {{ticket_info['subject']}}
+                  %else:
+                    <i>No subject</i>
+                  %end
+                </button>
+                % if username:
+                  <button type="button" onclick="actionButton({{ticket_info['id']}}, 'take')" class="btn btn-default">
+                    <span class="glyphicon glyphicon-hand-right" aria-hidden="true"></span>
+                  </button>
+                % end
               </div>
-          </div>
+            </div>
+          % end
+        </div>
       </div>
+      %end
+    </div>
   <br>  
   <table class="table"> 
     <thead> 
@@ -324,7 +328,7 @@
             });
         }
 </script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="static/res/js/jquery/jquery-1.11.3.min.js"></script>
     
     <script src="/static/res/js/bootstrap.min.js"></script>
     <script src="static/res/js/holder.min.js"></script>
