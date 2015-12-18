@@ -226,3 +226,20 @@ div#title{
 	color: black;
 	background-color: white;
 }
+
+.centerTables{
+  position: relative;
+  top: 50%;
+  left: 30%;
+}
+
+.glyphs-dirs{
+  position: fixed;
+  top: 32%;
+  left: 47.5%;
+}
+
+
+.dir-inbox-margins{
+  margin-left:40px; 
+}

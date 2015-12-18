@@ -10,6 +10,7 @@ from time import mktime
 from time import strptime
 from datetime import date
 from datetime import timedelta
+import pprint
 
 from ditic_kanban.config import DITICConfig
 from ditic_kanban.rt_api import get_list_of_tickets
@@ -189,11 +190,12 @@ def ticket_actions(rt_object, ticket_id, action, ticket_email, user_email):
 
     # There is so much to be done. So this is the default answer.
     result = 'Still working on it... sorry for the inconvenience!'
-
-    action_and_message = get_ticket_action_and_message(action)
-
-    action = action_and_message[0]
-
+    message = ''
+    if '-' in action:
+        action_and_message = get_ticket_action_and_message(action)
+        message = action_and_message[1]
+        action = action_and_message[0]
+        
     # INCREASE PRIORITY ##############################
     if action == 'increase_priority':
         result = modify_ticket(
@@ -273,6 +275,7 @@ def ticket_actions(rt_object, ticket_id, action, ticket_email, user_email):
                 }
             )
         elif ticket_line['status'] == 'new':
+
             result = modify_ticket(
                 rt_object,
                 ticket_id,
@@ -281,17 +284,21 @@ def ticket_actions(rt_object, ticket_id, action, ticket_email, user_email):
                     'status': 'open',
                 }
             )
+            print(result)
         elif ticket_line['status'] == 'open':
+
             result = modify_ticket(
                 rt_object,
                 ticket_id,
                 {
                     'timeworked': calculate_time_worked(ticket_line) + ' minutes',
                     'starts': '0',
-                    'status': 'resolved',
-                    'text': ticket_line['text']+"\n\n\n_______________________\n"+action_and_message[1],
+                    'status': 'resolved'
                 }
             )
+            if message:
+                comment_ticket(rt_object,ticket_id,message)
+
 
     # STALLED ##############################
     elif action == 'stalled':
@@ -383,9 +390,26 @@ def create_ticket(rt_object, subject, text, user_email):
         'action_result': result
     }
 
+def comment_ticket(rt_object, ticket_id, text):
+
+    result = comment_ticket(
+        rt_object,
+        {
+            'id': ticket_id,
+            'Action': 'comment',
+            'Text': text
+        }
+    )
+
+    return {
+        'action_result': result
+    }
 
 def get_ticket_action_and_message(action):
+    if '-' not in action:
+        return action
     result = action.split("-")
+    
     try:
         result[1] = result[1].replace("_", " ")
     except IndexError:

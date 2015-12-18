@@ -61,8 +61,7 @@ class RTApi:
         except urllib2.URLError:
             # Could not contact server!
             raise ValueError('Not able to contact server!')
-
-
+    
 def get_list_of_tickets(rt_object, query, detail=True):
     """
     Get a full list of all tickets, and its information, based on the query.
@@ -208,6 +207,27 @@ def create_new_ticket(rt_object, new_values):
     except ValueError as e:
         raise ValueError(e)
 
+def comment_ticket(rt_object, ticketId, new_values):
+    """
+    Creates ticket.The first variable will be a dictionary with
+    a combination of new attributes.
+
+    ::param new_values: a dictionary with a relation attribute and its new value. Example: { 'Status': 'new', ... }
+    :return: Operation result
+    """
+    content = ''
+    for key in new_values:
+        content += key + ': ' + new_values[key] + '\n'
+
+    # Information required for RT query
+    uri = 'ticket/'+ticketId+'/comment'
+    data = {'content': content}
+
+    # Create the ticket
+    try:
+        return rt_object.get_data_from_rest(uri, data)
+    except ValueError as e:
+        raise ValueError(e)
 
 def get_ticket_links(rt_object, ticket_id):
     """
