@@ -17,6 +17,7 @@ from ditic_kanban.rt_api import get_list_of_tickets
 from ditic_kanban.rt_api import modify_ticket
 from ditic_kanban.rt_api import create_new_ticket
 from ditic_kanban.kanban_logic import create_ticket_possible_actions
+import rt_summary
 
 
 def group_result_by(data, order_by):
@@ -227,14 +228,18 @@ def ticket_actions(rt_object, ticket_id, action, ticket_email, user_email):
                 }
             )
         elif ticket_line['status'] == 'new':
-            result = modify_ticket(
-                rt_object,
-                ticket_id,
-                {
-                    'owner': 'nobody',
-                    'cf.{is - informatica e sistemas}': 'dir-inbox',
-                }
-            )
+            temp = DITICConfig()
+            email_limit = temp.get_email_limits(ticket_line['owner'])
+            print ("val :::: ", str(get_dir_inbox_num()))
+            if get_dir_inbox_num() < email_limit['dir-inbox']:
+                result = modify_ticket(
+                    rt_object,
+                    ticket_id,
+                    {
+                        'owner': 'nobody',
+                        'cf.{is - informatica e sistemas}': 'dir-inbox',
+                    }
+                )
         elif ticket_line['status'] == 'open':
             result = modify_ticket(
                 rt_object,
@@ -320,7 +325,6 @@ def ticket_actions(rt_object, ticket_id, action, ticket_email, user_email):
             ticket_id,
             {
                 'owner': user_email,
-                'status': 'new',
             }
         )
 
@@ -341,7 +345,6 @@ def ticket_actions(rt_object, ticket_id, action, ticket_email, user_email):
                 'cf.{DITIC-Urgent}': '',
             }
         )
-
 
     # Interrupted ##############################
     elif action == 'interrupted':
@@ -574,3 +577,11 @@ def get_urgent_tickets(rt_object):
         return get_list_of_tickets(rt_object, query, detail=False)
     except ValueError:
         return []
+
+
+def get_dir_inbox_num():
+    summary = rt_summary.get_summary_info()
+    soma = 0
+    for status in summary['dir-inbox']:
+        soma += summary['dir-inbox'][status]
+    return soma

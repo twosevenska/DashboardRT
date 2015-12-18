@@ -5,6 +5,8 @@
 # Kanban Logic for the GSIIC-DITIC environment
 #
 
+import rt_summary
+
 
 def create_ticket_possible_actions(config, ticket, email, number_tickets_per_status):
     """
@@ -32,33 +34,61 @@ def create_ticket_possible_actions(config, ticket, email, number_tickets_per_sta
         # If this is unknown, then allow nothing...
         pass
 
-    # DIR-INBOX is very special...
+    # DIR is very special...(no-limit)
+    elif email == 'dir':
+        actions['increase_priority'] = True
+        actions['decrease_priority'] = True
+        # Can we move forward?
+        status = 'new'
+        if status in email_limit and status in number_tickets_per_status:
+            if number_tickets_per_status[status] < email_limit['dir-inbox']:
+                actions['forward'] = True
+        else:
+            actions['forward'] = True
+
+    # DIR-INBOX is very special...(shared by all)
     elif email == 'dir-inbox':
         actions['back'] = True
         actions['increase_priority'] = True
         actions['decrease_priority'] = True
 
-    # DIR is very special...
-    elif email == 'dir':
-        actions['increase_priority'] = True
-        actions['decrease_priority'] = True
-        actions['forward'] = True
+        # Can we take ticket?
+        status = 'new'
+        if status in email_limit and status in number_tickets_per_status:
+            if number_tickets_per_status[status] < email_limit[status]:
+                actions['take'] = True
+        else:
+            actions['take'] = True
 
     # If we are at IN (new), then we can move back or forward
     elif ticket['status'] == 'new':
-        actions['back'] = True
         actions['increase_priority'] = True
         actions['decrease_priority'] = True
+
+        # Can we move back?
+        status = 'new'
+        email = 'dir-inbox'
+        soma = 0
+        summary = rt_summary.get_summary_info()
+        for status in summary['dir-inbox']:
+            soma += summary['dir-inbox'][status]
+        if status in email_limit and status in number_tickets_per_status:
+            if soma < email_limit['dir-inbox']:
+                actions['back'] = True
+        else:
+            actions['back'] = True
+
+        # Can we move forward?
         status = 'open'
         if status in email_limit and status in number_tickets_per_status:
             if number_tickets_per_status[status] < email_limit[status]:
                 actions['forward'] = True
         else:
             actions['forward'] = True
+
     # Here we will analyze the condition of ACTIVE (open)
     elif ticket['status'] == 'open':
         actions['stalled'] = True
-        actions['interrupted'] = True
         actions['increase_priority'] = True
         actions['decrease_priority'] = True
 
@@ -66,9 +96,9 @@ def create_ticket_possible_actions(config, ticket, email, number_tickets_per_sta
         status = 'new'
         if status in email_limit and status in number_tickets_per_status:
             if number_tickets_per_status[status] < email_limit[status]:
-                actions['back'] = True
+                actions['interrupted'] = True
         else:
-            actions['back'] = True
+            actions['interrupted'] = True
 
         # Can we move forward?
         status = 'rejected'

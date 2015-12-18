@@ -236,6 +236,7 @@
                     % for priority in sorted(tickets[status], reverse=True):
                     <tr><td>
                     % for ticket in tickets[status][priority]:
+                    <tr><td>
                     % if ticket['kanban_actions']['interrupted']:
                     <button onclick="actionButton({{ticket['id']}}, 'interrupted')" type="button">
                             <span class="glyphicon glyphicon-ban-circle" aria-hidden="true"></span>
@@ -274,6 +275,9 @@
                             <span class="glyphicon glyphicon-flash" aria-hidden="true"></span>
                     </button>
                     </td>
+                    % else:
+                            <span class="glyphicon glyphicon-minus-sign" aria-hidden="true"></span>
+                            </td>
                     % end
                     % end
                 %   end
@@ -341,6 +345,8 @@
                         % if ticket['kanban_actions']['forward']:
                         <button onclick="actionButton({{ticket['id']}}, 'forward', '{{ticket['status']}}')" type="button">
                             <span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span></button>
+                        % else:
+                            <span class="glyphicon glyphicon-minus-sign" aria-hidden="true"></span>
                         % end
                         % end
                         </td></tr>
@@ -375,6 +381,8 @@
                             <span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span>
                         </button>
                         </td><td>
+                        % else:
+                            <span class="glyphicon glyphicon-minus-sign" aria-hidden="true"></span>
                         % end
                         % if ticket['kanban_actions']['increase_priority']:
                         <button onclick="actionButton({{ticket['id']}}, 'increase_priority')" type="button">

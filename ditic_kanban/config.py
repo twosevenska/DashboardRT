@@ -7,10 +7,12 @@
 
 import os;
 
+
 class DITICConfig:
     """
     This class contains all configuration for this server
     """
+
     def __init__(self):
         """
         This class contains those special variables.
@@ -40,6 +42,7 @@ class DITICConfig:
 
         :return: None
         """
+        dir_limit = 7
         self.email_to_user = {
             'vapi@uc.pt': 'vapi',
             'edd@uc.pt': 'edd',
@@ -52,49 +55,60 @@ class DITICConfig:
         }
         self.email_limits = {
             'vapi@uc.pt': {
-                'new': 7,
+                'dir-inbox': dir_limit,
+                'new': 4,
                 'open': 1,
+
                 'rejected': 7,
             },
             'edd@uc.pt': {
-                'new': 5,
-                'open': 2,
-                'rejected': 5,
+                'dir-inbox': dir_limit,
+                'new': 4,
+                'open': 1,
+
+                'rejected': 7,
             },
             'root@uc.pt': {
-                'new': 5,
-                'open': 2,
-                'rejected': 5,
+                'dir-inbox': dir_limit,
+                'new': 4,
+                'open': 1,
+
+                'rejected': 7,
             },
             'alexandre@uc.pt': {
-                'new': 5,
-                'open': 2,
+                'dir-inbox': dir_limit,
+                'new': 4,
+                'open': 1,
 
-                'rejected': 5,
+                'rejected': 7,
             },
             'andre@uc.pt': {
-                'new': 5,
-                'open': 2,
+                'dir-inbox': dir_limit,
+                'new': 4,
+                'open': 1,
 
-                'rejected': 5,
+                'rejected': 7,
             },
             'gloriya@uc.pt': {
-                'new': 5,
-                'open': 2,
+                'dir-inbox': dir_limit,
+                'new': 4,
+                'open': 1,
 
-                'rejected': 5,
+                'rejected': 7,
             },
             'robcunha@uc.pt': {
-                'new': 5,
-                'open': 2,
+                'dir-inbox': dir_limit,
+                'new': 4,
+                'open': 1,
 
-                'rejected': 5,
+                'rejected': 7,
             },
             'twoskie@uc.pt': {
-                'new': 5,
-                'open': 2,
+                'dir-inbox': dir_limit,
+                'new': 4,
+                'open': 1,
 
-                'rejected': 5,
+                'rejected': 7,
             },
         }
         self.list_status = [
