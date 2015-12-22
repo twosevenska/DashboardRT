@@ -286,6 +286,14 @@ def read_statistics_file(config):
 
 
 def write_statistics_file(config, result, desired_year, desired_month):
+    """
+    Get the current statistics and saves it into a file
+
+    :param config: instance of the config
+    :param result: statistics results
+    :param desired_year: year
+    :param desired_month: month
+    """
     system = config.get_system()
 
     filename = '%s/%s%s-%s' % (system['working_dir'],
