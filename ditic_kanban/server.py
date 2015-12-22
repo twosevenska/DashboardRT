@@ -39,7 +39,7 @@ from ditic_kanban.rt_api import fetch_ticket_brief_history
 from ditic_kanban.rt_api import fetch_history_item
 from ditic_kanban.statistics import get_date
 from ditic_kanban.statistics import get_statistics
-from ditic_kanban.tools import comment_ticket
+from ditic_kanban.tools import comment_the_ticket
 
 
 # My first global variable...
@@ -367,7 +367,7 @@ def ticket_action(ticket_id, action):
 
 
 @post('/ticket/<ticket_id>/comment/<msg>')
-def ticket_action(ticket_id, msg):
+def comment_action(ticket_id, msg):
     """
     Add a comment to a ticket
 
@@ -383,7 +383,7 @@ def ticket_action(ticket_id, msg):
     if user_id:
         if user_id in user_auth.ids.keys():
             try:
-                comment_ticket(
+                comment_the_ticket(
                     user_auth.get_rt_object_from_email(
                         user_auth.get_email_from_id(user_id)
                     ),
