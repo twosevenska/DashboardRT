@@ -44,9 +44,9 @@
         </li>
       </ul>
       <!-- SEARCH -->
-      <form class="navbar-form navbar-right">
-        <input type="text" class="form-control" placeholder="Search...">
-        <button type="submit" class="btn btn-primary">Search</button>
+      <form id="form1" class="navbar-form navbar-right">
+        <input id="inBtn" type="text" class="form-control" placeholder="Search..." />
+        <button id="sBtn" type="button" class="btn btn-primary"action="clickSearch()">Search</button>
       </form>
 
       <!-- NEW TICKET -->
@@ -73,6 +73,7 @@
   
 </nav>
 
+
 <div class="container">
     <!-- Row for Titles -->
     <div class="row" align="center">
@@ -93,39 +94,38 @@
             <tbody>
                 % for priority in sorted(dir['tickets'], reverse=True):
                     % for ticket in dir['tickets'][priority]:
-                        <tr><td>
+                        %if 'yes' in ticket['cf.{ditic-urgent}']:
+                            <tr class="blink">
+                        %else:
+                            <tr>
+                        %end
+                        <td data-valign="middle">
                         % if ticket['kanban_actions']['increase_priority']:
-                            <button onclick="actionButton({{ticket['id']}}, 'increase_priority')" type="button">
+                            <button onclick="actionButton({{ticket['id']}}, 'increase_priority')" type="button" title="More Priority">
                                     <span class="glyphicon glyphicon-menu-up" aria-hidden="true"></span>
                             </button>
                             </td><td>
                         % end
-                        <button onclick="clickTicket({{ticket['id']}});">
+                        <button onclick="clickTicket({{ticket['id']}});"  title="Details of ticket {{ticket['id']}}">
                             {{ticket['id']}} {{ticket['subject']}}
                         </button>
                         </td><td>
                         % if ticket['kanban_actions']['decrease_priority']:
-                            <button onclick="actionButton({{ticket['id']}}, 'decrease_priority')" type="button">
+                            <button onclick="actionButton({{ticket['id']}}, 'decrease_priority')" type="button" title="Less Priority">
                                     <span class="glyphicon glyphicon-menu-down" aria-hidden="true"></span>
                             </button>
                             </td><td>
+                        %end
+                        % if ticket['kanban_actions']['forward']:
+                            <button onclick="actionButton({{ticket['id']}}, 'forward', 'dir')" type="button">
+                                    <span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span>
+                            </button>
+
+                        % else:
+                            <span class="glyphicon glyphicon-minus-sign" aria-hidden="true"></span>
                         % end
-                        % sts = 'dir-inbox'
-                        % if sts in dirinbox['email_limit']:
-                                % if dirinbox['email_limit'][sts] > dirinbox['number_tickets_per_status'][sts]:
-                                    <button onclick="actionButton({{ticket['id']}}, 'forward', 'dir')" type="button">
-                                            <span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span>
-                                    </button>
-                                % else:
-                                    <span class="glyphicon glyphicon-minus-sign" aria-hidden="true"></span>
-                                % end
-                            %else:
-                                <button onclick="actionButton({{ticket['id']}}, 'forward', 'dir')" type="button">
-                                            <span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span>
-                                    </button>
-                            %end
-                        
-                        </td></tr>
+                        </td>
+                        </tr>
                     
                     %end
                 % end
@@ -145,7 +145,12 @@
             <tbody>
                 % for priority in sorted(dirinbox['tickets'], reverse=True):
                     % for ticket in dirinbox['tickets'][priority]:
-                        <tr><td>
+                        %if 'yes' in ticket['cf.{ditic-urgent}']:
+                            <tr class="blink">
+                        %else:
+                            <tr>
+                        %end
+                        <td>
                         <button onclick="actionButton({{ticket['id']}}, 'back', 'dir-inbox')" type="button">
                             <span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span>
                         </button>
@@ -156,7 +161,7 @@
                             </button>
                             </td><td>
                         % end
-                        <button onclick="clickTicket({{ticket['id']}});">
+                        <button onclick="clickTicket({{ticket['id']}});"  title="Details of ticket {{ticket['id']}}">
                             {{ticket['id']}} {{ticket['subject']}}
                         </button>
                         </td><td>

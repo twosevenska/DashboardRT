@@ -405,6 +405,7 @@ def comment_ticket(rt_object, ticket_id, text):
     }
 
 def get_ticket_action_and_message(action):
+    
     if '-' not in action:
         return action
     result = action.split("-")

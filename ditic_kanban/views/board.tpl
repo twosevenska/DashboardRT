@@ -193,7 +193,7 @@
           % for ticket_info in urgent:
             <div class="row">
               <div class="btn-group" role="group">
-                <button type="button" onclick="clickTicket({{ticket_info['id']}})" class="btn btn-default">
+                <button type="button" onclick="clickTicket({{ticket_info['id']}})" class="btn btn-default"  title="Details of ticket {{ticket_info['id']}}">
                   %if ticket_info['subject']:
                     {{ticket_info['subject']}}
                   %else:
@@ -216,7 +216,7 @@
   <table class="table"> 
     <thead> 
       <tr> 
-        <th>user</th> 
+        <th>USER</th> 
         <th>IN</th> 
         <th>ACTIVE</th> 
         <th>STALLED</th> 
@@ -233,20 +233,20 @@
       %       user = alias[email]
       %   end
     <tbody> 
-       <tr>
-                    <td><a href="/detail">{{user}}</a></td>
-                    %   for status in ['new', 'open', 'stalled', 'resolved']:
-                    <td>{{summary[email][status]}}</td>
-                    %       totals[status] += summary[email][status]
-                    % end
-                </tr>
-                % end
-     <tr>
-                    <td><strong>Totais</strong></td>
-                    %   for status in ['new', 'open', 'stalled', 'resolved']:
-                    <td><strong>{{totals[status]}}</strong></td>
-                    % end
-                </tr>
+      <tr>
+        <td>{{user}}
+        %   for status in ['new', 'open', 'stalled', 'resolved']:
+        <td>{{summary[email][status]}}</td>
+        %       totals[status] += summary[email][status]
+        % end
+      </tr>
+      % end
+    <tr>
+      <td><strong>Totais</strong></td>
+      %   for status in ['new', 'open', 'stalled', 'resolved']:
+      <td><strong>{{totals[status]}}</strong></td>
+      % end
+    </tr>
    </tbody> 
  </table> 
 
@@ -327,6 +327,7 @@
                 }
             });
         }
+    setTimeout(function(){window.location.reload()},10000);
 </script>
     <script src="static/res/js/jquery/jquery-1.11.3.min.js"></script>
     

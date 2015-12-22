@@ -178,7 +178,7 @@ class DITICConfig:
         :return: If status is provided, then return that status limits (int).
                  If no status is required, then return the dictionary with all limits
         """
-        print("email-"+email)
+        
         if status:
             if email not in self.email_limits.keys() or status not in self.email_limits[email]:
                 return 0

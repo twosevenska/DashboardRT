@@ -243,3 +243,31 @@ div#title{
 .dir-inbox-margins{
   margin-left:40px; 
 }
+
+@-webkit-keyframes blink {
+  from { background-color: red; }
+  to { background-color: inherit; }
+}
+@-moz-keyframes blink {
+  from { background-color: red; }
+  to { background-color: inherit; }
+}
+@-o-keyframes blink {
+  from { background-color: red; }
+  to { background-color: inherit; }
+}
+@keyframes blink {
+  from { background-color: red; }
+  to { background-color: inherit; }
+}
+.blink {
+  -webkit-animation: blink 7s infinite; / Safari 4+ /
+  -moz-animation:    blink 7s infinite; / Fx 5+ /
+  -o-animation:      blink 7s infinite; / Opera 12+ /
+  animation:         blink 7s infinite; / IE 10+ /
+}
+
+td {
+    padding: 1em;
+}
+}

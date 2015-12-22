@@ -91,6 +91,9 @@ def get_root():
     else:
         redirect('/login')
 
+@route('/static/<filepath:path>', name="static")
+def static(filepath):
+    return static_file(filepath, root=STATIC_PATH)
 
 @route('/login')
 def get_login():
@@ -176,7 +179,7 @@ def get_admin_board():
     if user_id:
         if user_id in user_auth.ids.keys():
             result = create_default_result()
-            result.update({'username': user_auth.get_email_from_id(user_id)})
+            result.update({'username': result['alias'][user_auth.get_email_from_id(user_id)]})
             result.update({'email': user_auth.get_email_from_id(user_id)})
             result.update({'username_id': user_id})
 
@@ -189,7 +192,7 @@ def get_admin_board():
                 user_auth.get_rt_object_from_email(
                     user_auth.get_email_from_id(user_id)
                  ), 'dir-inbox')})
-            pp.pprint(result)
+            
             return template('income', result)
         else:
             del_auth()
@@ -289,6 +292,37 @@ def ticket_action(ticket_id, action):
                     action,
                     request.json.get('ticketmail'),
                     user_auth.get_email_from_id(user_id)
+                    )
+                response.status = 200
+                return
+            except AttributeError as e:
+                print("AttributeError=" + str(e))
+                response.status = 500
+                return
+        else:
+            del_auth()
+            redirect('/login')
+    else:
+        redirect('/login')
+
+@post('/ticket/<ticket_id>/comment/<msg>')
+def ticket_action(ticket_id, action):
+    start_time = time()
+    try:
+        user_id = request.get_cookie('account', secret='secret')
+    except AttributeError as e:
+        print("AttributeError=" + str(e))
+        response.status = 500
+        return
+    if user_id:
+        if user_id in user_auth.ids.keys():
+            try:
+                comment_ticket(
+                    user_auth.get_rt_object_from_email(
+                        user_auth.get_email_from_id(user_id)
+                    ),
+                    ticket_id,
+                    msg
                     )
                 response.status = 200
                 return
@@ -468,9 +502,6 @@ def get_history_item_details(ticket_id, item_id):
     return template('history_item_details', result)
 
 
-@route("/static/<filepath:path>", name="static")
-def static(filepath):
-    return static_file(filepath, root=STATIC_PATH)
 
 
 class SummaryGenerator(threading.Thread):
@@ -493,5 +524,5 @@ class SummaryGenerator(threading.Thread):
 
 def start_server():
     generate_summary_file()
-    SummaryGenerator(30).start()
+    SummaryGenerator(5).start()
     run(server='paste', host='0.0.0.0', debug=True)
