@@ -50,12 +50,9 @@ def create_ticket_possible_actions(config, ticket, email, number_tickets_per_sta
 
             soma = 0
             summary = rt_summary.get_summary_info()
-            
-            for status in summary['dir-inbox']:
-                soma += summary['dir-inbox'][status]
-            pp.pprint(summary['dir-inbox'])
-            if status in email_limit and status in number_tickets_per_status:
-                if soma < email_limit['dir-inbox']:
+            pp.pprint(number_tickets_per_status)
+            if 'dir-inbox' in email_limit and status in number_tickets_per_status:
+                if summary['dir-inbox'][status] < email_limit['dir-inbox']:
                     actions['forward'] = True
             
             
