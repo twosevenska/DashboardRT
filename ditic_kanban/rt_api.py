@@ -61,7 +61,8 @@ class RTApi:
         except urllib2.URLError:
             # Could not contact server!
             raise ValueError('Not able to contact server!')
-    
+
+
 def get_list_of_tickets(rt_object, query, detail=True):
     """
     Get a full list of all tickets, and its information, based on the query.
@@ -207,6 +208,7 @@ def create_new_ticket(rt_object, new_values):
     except ValueError as e:
         raise ValueError(e)
 
+
 def comment_ticket(rt_object, ticketId, new_values):
     """
     Creates ticket.The first variable will be a dictionary with
@@ -228,6 +230,7 @@ def comment_ticket(rt_object, ticketId, new_values):
         return rt_object.get_data_from_rest(uri, data)
     except ValueError as e:
         raise ValueError(e)
+
 
 def get_ticket_links(rt_object, ticket_id):
     """
@@ -264,6 +267,7 @@ def get_ticket_links(rt_object, ticket_id):
             continue
 
     return result
+
 
 def fetch_ticket_details(rt_object, ticket_id):
     """
@@ -369,6 +373,7 @@ def _extract_attribute(line):
         return line[ : line.index(':')].strip()
     except ValueError, e:
         return None
+
 
 def _extract_value(line):
     """

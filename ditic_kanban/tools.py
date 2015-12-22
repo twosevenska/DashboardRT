@@ -69,6 +69,14 @@ def group_result_by(data, order_by):
 
 
 def user_tickets_details(rt_object, email):
+    """
+    Returns the list of tickets for a user/email
+
+    :param rt_object: rt object for querying (must be users authenticated)
+    :param email: the user email
+
+    :return: a dictionary
+    """
 
     query = 'Owner = "'+email+'" AND Queue = "general" '
 
@@ -363,7 +371,16 @@ def ticket_actions(rt_object, ticket_id, action, ticket_email, user_email):
 
 
 def create_ticket(rt_object, subject, text, user_email):
+    """
+    Creates a ticket in rt
 
+    :param rt_object: rt object for querying (must be users authenticated)
+    :param subject: the subject of the new ticket
+    :param text: description of a ticket
+    :param user_email: the email of the user requesting the ticket creation
+
+    :return: a dictionary
+    """
     result = create_new_ticket(
         rt_object,
         {
@@ -389,8 +406,17 @@ def create_ticket(rt_object, subject, text, user_email):
         'action_result': result
     }
 
-def comment_ticket(rt_object, ticket_id, text):
 
+def comment_ticket(rt_object, ticket_id, text):
+    """
+    Adds a comment to a ticket
+
+    :param rt_object: rt object for querying (must be users authenticated)
+    :param ticket_id: The Id of the ticket
+    :param text: body of the comment
+
+    :return: a dictionary
+    """
     result = comment_ticket(
         rt_object,
         {
@@ -404,7 +430,17 @@ def comment_ticket(rt_object, ticket_id, text):
         'action_result': result
     }
 
+
 def get_ticket_action_and_message(action):
+    """
+    This simply splits the action and it's text received from the browser
+
+    :param action: a ticket action
+
+    :return: a list
+    """
+    # TODO: This was just a temporary solution. The whole thing should be done with JSONS
+
     if '-' not in action:
         return action
     result = action.split("-")
@@ -576,8 +612,13 @@ def get_urgent_tickets(rt_object):
 
 
 def get_dir_inbox_num():
+    """
+    Get the total number of tickets in dir-inbox
+
+    :return: A number
+    """
     summary = rt_summary.get_summary_info()
-    soma = 0
+    total = 0
     for status in summary['dir-inbox']:
-        soma += summary['dir-inbox'][status]
-    return soma
+        total += summary['dir-inbox'][status]
+    return total

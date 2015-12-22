@@ -22,6 +22,11 @@ class UserAuth:
         }
 
     def __get_new_id(self):
+        """
+        Generate a new uid (unicode with id value) for a user
+
+        :return: uid
+        """
         while True:
             new_id = unicode(randint(0, 1000))
             if new_id not in self.ids:
@@ -29,6 +34,13 @@ class UserAuth:
 
     # noinspection PyTypeChecker
     def get_email_id(self, email):
+        """
+        Given an email it returns the correspondent uid (unicode with id value)
+
+        :param email: user email
+        :return: uid
+        """
+
         if email not in self.config.get_email_to_user().keys():
             raise ValueError('Unknown email')
 
@@ -40,12 +52,24 @@ class UserAuth:
 
     # noinspection PyTypeChecker
     def get_email_from_id(self, uid):
+        """
+        Given a uid it returns the correspondent email
+
+        :param uid: unicode with id value
+        :return: String with email
+        """
         if 'email' not in self.ids[uid]:
             raise ValueError('Unauthenticated user')
         return self.ids[uid]['email']
 
     # noinspection PyTypeChecker,PyTypeChecker
     def get_rt_object_from_email(self, email):
+        """
+        Get the rt_object instance for a given email
+
+        :param email: user email
+        :return: rt_object instance
+        """
         if email not in self.config.get_email_to_user().keys():
             raise ValueError('Unknown email')
 
@@ -68,6 +92,13 @@ class UserAuth:
         return False
 
     def check_password(self, email, pwd):
+        """
+        This function will check if the password is correct
+
+        :param email: user email
+        :param pwd: user password
+        :return: True or False, depending if everything checks out
+        """
         if email not in self.config.get_email_to_user().keys():
             raise ValueError('Unknown email')
 
