@@ -16,6 +16,7 @@ from ditic_kanban.config import DITICConfig
 from ditic_kanban.rt_api import get_list_of_tickets
 from ditic_kanban.rt_api import modify_ticket
 from ditic_kanban.rt_api import create_new_ticket
+from ditic_kanban.rt_api import comment_ticket
 from ditic_kanban.kanban_logic import create_ticket_possible_actions
 import rt_summary
 
@@ -68,7 +69,7 @@ def group_result_by(data, order_by):
     return result
 
 
-def user_tickets_details(rt_object, email):
+def user_tickets_details(rt_object, email, requestor_email=None):
     """
     Returns the list of tickets for a user/email
 
@@ -120,7 +121,7 @@ def user_tickets_details(rt_object, email):
         result = group_result_by(response, 'priority')
         for priority in result:
             for line in result[priority]:
-                create_ticket_possible_actions(config, line, email, number_tickets_per_status)
+                create_ticket_possible_actions(config, line, email, number_tickets_per_status, requestor_email)
     else:
         # Get some statistics
         response_grouped_by_status = group_result_by(response, 'status')
@@ -407,7 +408,7 @@ def create_ticket(rt_object, subject, text, user_email):
     }
 
 
-def comment_ticket(rt_object, ticket_id, text):
+def comment_the_ticket(rt_object, ticket_id, text):
     """
     Adds a comment to a ticket
 
@@ -419,6 +420,7 @@ def comment_ticket(rt_object, ticket_id, text):
     """
     result = comment_ticket(
         rt_object,
+        ticket_id,
         {
             'id': ticket_id,
             'Action': 'comment',

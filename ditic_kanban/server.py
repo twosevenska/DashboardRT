@@ -33,6 +33,7 @@ from ditic_kanban.tools import user_closed_tickets
 from ditic_kanban.tools import search_tickets
 from ditic_kanban.tools import get_urgent_tickets
 from ditic_kanban.tools import create_ticket
+from ditic_kanban.tools import comment_the_ticket
 from ditic_kanban.rt_api import RTApi
 from ditic_kanban.rt_api import fetch_ticket_details
 from ditic_kanban.rt_api import fetch_ticket_brief_history
@@ -119,8 +120,9 @@ def get_detail():
             result.update({'dirinbox':user_tickets_details(
                 user_auth.get_rt_object_from_email(
                     user_auth.get_email_from_id(user_id)
-                 ), 'dir-inbox')})
+                 ), 'dir-inbox', user_auth.get_email_from_id(user_id))})
             result.update({'time_spent': '%0.2f seconds' % (time() - start_time)})
+            
             return template('detail', result)
         else:
             del_auth()
@@ -143,6 +145,7 @@ def get_board():
 
             result.update({'urgent': get_urgent_tickets(rt_object)})
             result.update({'time_spent': '%0.2f seconds' % (time() - start_time)})
+            
             return template('board', result)
         else:
             del_auth()
@@ -165,6 +168,7 @@ def get_board():
 
             result.update({'urgent': get_urgent_tickets(rt_object)})
             result.update({'time_spent': '%0.2f seconds' % (time() - start_time)})
+            
             return template('board', result)
         else:
             del_auth()
@@ -262,7 +266,7 @@ def new_ticket():
                     )
                 response.status = 200
                 return
-            except:
+            except AttributeError:
                 print("AttributeError=" + str(e))
                 response.status = 500
                 return
@@ -306,7 +310,7 @@ def ticket_action(ticket_id, action):
         redirect('/login')
 
 @post('/ticket/<ticket_id>/comment/<msg>')
-def ticket_action(ticket_id, action):
+def comment(ticket_id, msg):
     start_time = time()
     try:
         user_id = request.get_cookie('account', secret='secret')
@@ -317,7 +321,7 @@ def ticket_action(ticket_id, action):
     if user_id:
         if user_id in user_auth.ids.keys():
             try:
-                comment_ticket(
+                comment_the_ticket(
                     user_auth.get_rt_object_from_email(
                         user_auth.get_email_from_id(user_id)
                     ),
@@ -494,7 +498,7 @@ def get_history_item_details(ticket_id, item_id):
 
     rt_api = user_auth.get_rt_object_from_email(user_auth.get_email_from_id(request.query.o))
     details = fetch_history_item(rt_api, ticket_id, item_id)
-    pp.pprint(details)
+
     result.update(details)
 
     result.update({'time_spent': '%0.2f seconds' % (time() - start_time)})

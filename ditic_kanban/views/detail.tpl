@@ -538,25 +538,7 @@
                 }
             });
         }
-    function onCommentClick(ticketId) {
-
-            msg = prompt("Enter comment:", "");
-            $.ajax({
-                type: "POST",
-                url: "/ticket/"+ticketId+"/comment/"+msg,
-                data: "{}",
-                contentType: "application/json",
-                success: function (data) {
-                    window.location.reload();
-                },
-                statusCode: {
-                    500: function() {
-                        window.location.reload();
-                        alert('Internal error. Unable to comment.');
-                      }
-                }
-            });
-        }
+    
     function clickTicket(ticketId) {
             $.ajax({
                 type: "GET",

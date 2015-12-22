@@ -13,8 +13,10 @@
 
     <link href="../static/res/css/bootstrap.min.css" rel="stylesheet">
     <link href="../static/res/css/bootstrap-theme.min.css" rel="stylesheet">
+    <link href="../static/res/css/tdetail.css" rel="stylesheet">
+
     </head>
-<body background="static/res/img/background.png" style="background-repeat: repeat-y;">
+<body background="../static/res/img/background.png" style="background-repeat: repeat;">
 
 
 <nav class="navbar navbar-inverse navbar-fixed-top">
@@ -69,82 +71,94 @@
   
 </nav>
 
-
-
-
 <p> &nbsp </p>
 <p> &nbsp </p>
 
-   <div class="container">
+<div class="container ticket_detail">
+  <h1><small>Details of the ticket #{{ticket_id}}:</small> {{subject}}  </h1>
+  <button class="btn btn-primary" onclick="onCommentClick({{ticket_id}})" type="button" title="Comment this ticket">
+    Comment
+  </button>
+  <div class="row">
+    <div class="col-md-8">
+    	<div class="col-md-4">
+  			<h2>The Basics:</h2>
+  			<h4>id:<small> {{ticket_id}}</small></h4>
+  			<h4>Status:<small> {{status}}</small></h4>
+  			<h4>Priority:<small> {{priority}}</small></h4>
+  			<h4>Queue:<small> {{queue}}</small></h4>
 
-	
+  			<h2>People:</h2>
 
-	          <h1><small>Details of the ticket #{{ticket_id}}:</small> {{subject}}  </h1>
-
-	
-<div class="row">
-        <div class="col-md-8">
-        	<div class="col-md-4">
-
-			<h2>The Basics:</h2>
-
-			<h4>id:<small> {{ticket_id}}</small></h4>
-			<h4>Status:<small> {{status}}</small></h4>
-			<h4>Priority:<small> {{priority}}</small></h4>
-			<h4>Queue:<small> {{queue}}</small></h4>
-
-			<h2>People:</h2>
-
-			<h4>Owner:<small> {{owner}}</small></h4>
-			<h4>Requestors:<small> {{requestors}}</small></h4>
-			<h4>Cc:<small> {{cc}}</small></h4>
-			<h4>AdminCc:<small> {{admincc}}</small></h4>
-</div>
-<div class="col-md-4">
-			<h2>Dates:</h2>
-
-			<h4>Created:<small>  {{created}}</small></h4>
-			<h4>Starts:<small> {{starts}}</small></h4>
-			<h4>Started:<small>  {{started}}</small></h4>
-			<h4>Last Contact:<small>  {{told}}</small></h4>
-
-
-			<h4>Due:<small> {{due}}</small></h4>
-				% closed = get('closed', '')
-				% if closed:
-			<h4>Closed:<small> {{closed}}</small></h4>
-				% end
-
-				% updated = get('updated', '')
-				% if updated:
-			<h4>Updated:<small> {{updated}}</small></h4>
-			% end
-
-			<h2>Custom Fields:</h2>
-
-				% interrupted = get('cf.{ditic-interrupted}', '')
-			<h4>DITIC-interrupted:<small> {{interrupted}}</small></h4>
-
-				% urgent = get('cf.{ditic-urgent}', '')
-			<h4>DITIC-urgent:<small> {{urgent}}</small></h4>
-
-				% sistemas = get('cf.{is - informatica e sistemas}', '')
-			<h4>IS - Informatica e Sistemas:<small> {{sistemas}}</small></h4>
-
-				% servico = get('cf.{servico}', '')
-			<h4>Servico:<small> {{servico}}</small></h4>
-</div>
-		</div>
-        <div class="col-md-4">
-
-			<h2>History:</h2>
-				% for item in history :
-			<a href="/ticket/{{ticket_id}}/history/{{item[0]}}?o={{username_id}}">{{item[1]}}</a><br><br>
-				% end
-</div>
+  			<h4>Owner:<small> {{owner}}</small></h4>
+  			<h4>Requestors:<small> {{requestors}}</small></h4>
+  			<h4>Cc:<small> {{cc}}</small></h4>
+  			<h4>AdminCc:<small> {{admincc}}</small></h4>
       </div>
+      <div class="col-md-4">
+  			<h2>Dates:</h2>
+  			<h4>Created:<small>  {{created}}</small></h4>
+  			<h4>Starts:<small> {{starts}}</small></h4>
+  			<h4>Started:<small>  {{started}}</small></h4>
+  			<h4>Last Contact:<small>  {{told}}</small></h4>
+  			<h4>Due:<small> {{due}}</small></h4>
+  				% closed = get('closed', '')
+  				% if closed:
+  			<h4>Closed:<small> {{closed}}</small></h4>
+  				% end
+
+  				% updated = get('updated', '')
+  				% if updated:
+  			<h4>Updated:<small> {{updated}}</small></h4>
+  			% end
+
+  			<h2>Custom Fields:</h2>
+
+  				% interrupted = get('cf.{ditic-interrupted}', '')
+  			<h4>DITIC-interrupted:<small> {{interrupted}}</small></h4>
+
+  				% urgent = get('cf.{ditic-urgent}', '')
+  			<h4>DITIC-urgent:<small> {{urgent}}</small></h4>
+
+  				% sistemas = get('cf.{is - informatica e sistemas}', '')
+  			<h4>IS - Informatica e Sistemas:<small> {{sistemas}}</small></h4>
+
+  				% servico = get('cf.{servico}', '')
+  			<h4>Servico:<small> {{servico}}</small></h4>
+      </div>
+    </div>
+    <div class="col-md-4">
+
+      <h2>History:</h2>
+		  % for item in history :
+        <a href="/ticket/{{ticket_id}}/history/{{item[0]}}?o={{username_id}}">{{item[1]}}</a><br><br>
+		  % end
+    </div>
+  </div>
 </div>
+<script src="/static/res/js/jquery/jquery-1.11.3.min.js"></script>
 <script>
+
+function onCommentClick(ticketId) {
+
+            msg = prompt("Enter comment:", "");
+            $.ajax({
+                type: "POST",
+                url: "/ticket/"+ticketId+"/comment/"+msg,
+                data: "{}",
+                contentType: "application/json",
+                success: function (data) {
+                    window.location.reload();
+                },
+                statusCode: {
+                    500: function() {
+                        window.location.reload();
+                        alert('Internal error. Unable to comment.');
+                      }
+                }
+            });
+        }
+
 </script>
 
 

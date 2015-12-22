@@ -6,9 +6,8 @@
 #
 
 import rt_summary
-import pprint
 
-def create_ticket_possible_actions(config, ticket, email, number_tickets_per_status):
+def create_ticket_possible_actions(config, ticket, email, number_tickets_per_status, requestor_email=None):
     """
     This function will create a dictionary with possible actions to be done to this ticket. It will be added to the
     ticket dictionary.
@@ -19,7 +18,7 @@ def create_ticket_possible_actions(config, ticket, email, number_tickets_per_sta
     :param number_tickets_per_status: the number of tickets (used to evaluate if this ticket can be moved)
     :return: Null
     """
-    pp = pprint.PrettyPrinter(indent=2)
+
     email_limit = config.get_email_limits(ticket['owner'])
     actions = {
         'back': False,
@@ -47,12 +46,14 @@ def create_ticket_possible_actions(config, ticket, email, number_tickets_per_sta
             # Can we move forward?
             status='new'
             email_limit = config.get_email_limits('dir-inbox')
-
-            soma = 0
             summary = rt_summary.get_summary_info()
-            pp.pprint(number_tickets_per_status)
-            if 'dir-inbox' in email_limit and status in number_tickets_per_status:
-                if summary['dir-inbox'][status] < email_limit['dir-inbox']:
+
+            total_of_tickets = 0
+            for status in summary['dir-inbox']:
+                total_of_tickets += summary['dir-inbox'][status]
+
+            if 'dir-inbox' in email_limit:
+                if total_of_tickets < email_limit['dir-inbox']:
                     actions['forward'] = True
             
             
@@ -66,18 +67,16 @@ def create_ticket_possible_actions(config, ticket, email, number_tickets_per_sta
         if ticket['cf.{ditic-urgent}'] == 'yes':
             actions['take'] = True
         else:
-            # Can we take ticket?
-            email = 'dir-inbox'
-            email_limit = config.get_email_limits(email)
-            status = 'new'
-            
-            soma = 0
-            summary = rt_summary.get_summary_info()
-            for status in summary['dir-inbox']:
-                soma += summary['dir-inbox'][status]
-            if status in email_limit and status in number_tickets_per_status:
-                if number_tickets_per_status[status] < email_limit[status]:
-                    actions['take'] = True
+            if requestor_email:
+                status = 'new'
+                email_limit = config.get_email_limits(requestor_email)
+                # Can we take ticket?
+                summary = rt_summary.get_summary_info()
+                
+                total_of_tickets = 0
+                if status in summary[requestor_email] :
+                    if summary[requestor_email][status] < email_limit[status]:
+                        actions['take'] = True
             
 
     # If we are at IN (new), then we can move back or forward
@@ -91,23 +90,30 @@ def create_ticket_possible_actions(config, ticket, email, number_tickets_per_sta
             actions['back'] = True
             actions['forward'] = True
         else:
-            # Can we move back?
-            status = 'new'
-            email = 'dir-inbox'
-            soma = 0
             summary = rt_summary.get_summary_info()
-            for status in summary['dir-inbox']:
-                soma += summary['dir-inbox'][status]
-            if status in email_limit and status in number_tickets_per_status:
-                if soma < email_limit['dir-inbox']:
-                    actions['back'] = True
-            
 
             # Can we move forward?
             status = 'open'
-            if status in email_limit and status in number_tickets_per_status:
-                if number_tickets_per_status[status] < email_limit[status]:
+            email_limit = config.get_email_limits(email)
+            
+
+            if status in email_limit and status in summary[email]:
+                if summary[email][status] < email_limit[status]:
                     actions['forward'] = True
+
+            # Can we move back?
+            status = 'new'
+            email = 'dir-inbox'
+            total_of_tickets = 0
+            
+            for status in summary['dir-inbox']:
+                total_of_tickets += summary['dir-inbox'][status]
+            if status in email_limit and status in number_tickets_per_status:
+                if total_of_tickets < email_limit['dir-inbox']:
+                    actions['back'] = True
+            
+
+            
             
 
     # Here we will analyze the condition of ACTIVE (open)
@@ -115,13 +121,11 @@ def create_ticket_possible_actions(config, ticket, email, number_tickets_per_sta
         actions['stalled'] = True
         actions['increase_priority'] = True
         actions['decrease_priority'] = True
-
+        actions['forward'] = True
         #Urgent is like God status
         if ticket['cf.{ditic-urgent}'] == 'yes':
             actions['interrupted'] = True
-            actions['forward'] = True
         else:
-
             # Can we move back?
             status = 'new'
             if status in email_limit and status in number_tickets_per_status:
@@ -129,11 +133,7 @@ def create_ticket_possible_actions(config, ticket, email, number_tickets_per_sta
                     actions['interrupted'] = True
             
 
-            # Can we move forward?
-            status = 'rejected'
-            if status in email_limit and status in number_tickets_per_status:
-                if number_tickets_per_status[status] < email_limit[status]:
-                    actions['forward'] = True
+            
             
 
     # What about the STALLED? What can we do?

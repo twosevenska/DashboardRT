@@ -66,7 +66,6 @@ class DITICConfig:
                 'dir-inbox': dir_limit,
                 'new': 4,
                 'open': 1,
-
                 'rejected': 7,
             },
             'edd@uc.pt': {
