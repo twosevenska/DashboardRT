@@ -5,7 +5,7 @@
 # This python file aim is to provide all configuration necessary for using this packageI
 #
 
-import os;
+import os
 
 
 class DITICConfig:
@@ -137,9 +137,19 @@ class DITICConfig:
         }
 
     def get_email_to_user(self):
+        """
+        Get the a dictionary of the users emails with their respective username
+
+        :return: A dictionary
+        """
         return self.email_to_user
 
     def get_system(self):
+        """
+        Get an instance of the config class
+
+        :return: System
+        """
         return self.system
 
     def get_user_from_email(self, email):
@@ -189,6 +199,11 @@ class DITICConfig:
             return self.email_limits[email]
 
     def get_list_status(self):
+        """
+        Get a list of tickets status
+
+        :return: A list
+        """
         return self.list_status
 
     def check_if_user_exist(self, user):
