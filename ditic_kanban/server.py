@@ -33,13 +33,13 @@ from ditic_kanban.tools import user_closed_tickets
 from ditic_kanban.tools import search_tickets
 from ditic_kanban.tools import get_urgent_tickets
 from ditic_kanban.tools import create_ticket
-from ditic_kanban.tools import comment_the_ticket
 from ditic_kanban.rt_api import RTApi
 from ditic_kanban.rt_api import fetch_ticket_details
 from ditic_kanban.rt_api import fetch_ticket_brief_history
 from ditic_kanban.rt_api import fetch_history_item
 from ditic_kanban.statistics import get_date
 from ditic_kanban.statistics import get_statistics
+from ditic_kanban.tools import comment_ticket
 
 
 # My first global variable...
@@ -65,6 +65,11 @@ pp = pprint.PrettyPrinter(indent=2)
 
 
 def create_default_result():
+    """
+    Generates a default result
+
+    :return: A dictionary
+    """
     # Default header configuration
     result = {
         'title': 'Still testing...'
@@ -84,25 +89,45 @@ def create_default_result():
 #   ROUTES
 ################################################################
 
+
 @route('/')
 def get_root():
+    """
+    Fetch the welcome page
+
+    """
     user_id = request.get_cookie('account', secret='secret')
-    if user_id :
+    if user_id:
         redirect('/detail')
     else:
         redirect('/login')
 
+
 @route('/static/<filepath:path>', name="static")
 def static(filepath):
+    """
+    Fetches the path for the different resources in the static folder
+
+    :return: HTTPResponse
+    """
     return static_file(filepath, root=STATIC_PATH)
+
 
 @route('/login')
 def get_login():
+    """
+    Fetch the login page
+
+    """
     return template('login', {})
 
 
 @route('/detail')
 def get_detail():
+    """
+    Fetch the detail page
+
+    """
     start_time = time()
     user_id = request.get_cookie('account', secret='secret')
     if user_id:
@@ -117,12 +142,11 @@ def get_detail():
                     user_auth.get_email_from_id(user_id)
                  ), user_auth.get_email_from_id(user_id)))
 
-            result.update({'dirinbox':user_tickets_details(
+            result.update({'dirinbox': user_tickets_details(
                 user_auth.get_rt_object_from_email(
                     user_auth.get_email_from_id(user_id)
-                 ), 'dir-inbox', user_auth.get_email_from_id(user_id))})
+                 ), 'dir-inbox')})
             result.update({'time_spent': '%0.2f seconds' % (time() - start_time)})
-            
             return template('detail', result)
         else:
             del_auth()
@@ -130,8 +154,13 @@ def get_detail():
     else:
         redirect('/login')
 
+
 @route('/board')
 def get_board():
+    """
+    Fetch the board page
+
+    """
     start_time = time()
     user_id = request.get_cookie('account', secret='secret')
     if user_id:
@@ -141,20 +170,24 @@ def get_board():
             result.update({'username_id': user_id})
             
             today = date.today().isoformat()
-            result.update({'statistics':get_statistics(get_date(30,today),today)})
+            result.update({'statistics': get_statistics(get_date(30, today), today)})
 
             result.update({'urgent': get_urgent_tickets(rt_object)})
             result.update({'time_spent': '%0.2f seconds' % (time() - start_time)})
-            
             return template('board', result)
         else:
             del_auth()
             redirect('/login')
     else:
         redirect('/login')
+
 
 @route('/user')
 def get_board():
+    """
+    Fetch the user page
+
+    """
     start_time = time()
     user_id = request.get_cookie('account', secret='secret')
     if user_id:
@@ -164,11 +197,10 @@ def get_board():
             result.update({'username_id': user_id})
             
             today = date.today().isoformat()
-            result.update({'statistics':get_statistics(get_date(30,today),today)})
+            result.update({'statistics': get_statistics(get_date(30, today), today)})
 
             result.update({'urgent': get_urgent_tickets(rt_object)})
             result.update({'time_spent': '%0.2f seconds' % (time() - start_time)})
-            
             return template('board', result)
         else:
             del_auth()
@@ -176,9 +208,13 @@ def get_board():
     else:
         redirect('/login')
 
+
 @route('/income')
 def get_admin_board():
-    start_time = time()
+    """
+    Fetch the income page
+
+    """
     user_id = request.get_cookie('account', secret='secret')
     if user_id:
         if user_id in user_auth.ids.keys():
@@ -187,12 +223,12 @@ def get_admin_board():
             result.update({'email': user_auth.get_email_from_id(user_id)})
             result.update({'username_id': user_id})
 
-            result.update({'dir':user_tickets_details(
+            result.update({'dir': user_tickets_details(
                 user_auth.get_rt_object_from_email(
                     user_auth.get_email_from_id(user_id)
                  ), 'dir')})
 
-            result.update({'dirinbox':user_tickets_details(
+            result.update({'dirinbox': user_tickets_details(
                 user_auth.get_rt_object_from_email(
                     user_auth.get_email_from_id(user_id)
                  ), 'dir-inbox')})
@@ -208,8 +244,13 @@ def get_admin_board():
 #   REST API
 ################################################################
 
+
 @post('/auth')
 def auth():
+    """
+    Called when the user tries to login. Sets up a cookie.
+
+    """
     try:
         username = request.json.get('username')
         password = request.json.get('password')
@@ -236,15 +277,24 @@ def auth():
 
 @delete('/auth')
 def del_auth():
+    """
+    Called when the user logs out and deletes the cookie
+
+    """
     user_id = request.get_cookie('account', secret='secret')
-    if user_id :
+    if user_id:
         response.set_cookie('account', '', secret='secret')
         response.status = 200
     else:
         response.status = 204
 
+
 @post('/ticket')
 def new_ticket():
+    """
+    Submit all the information for a new ticket
+
+    """
     try:
         user_id = request.get_cookie('account', secret='secret')
         subject = request.json.get('subject')
@@ -266,7 +316,7 @@ def new_ticket():
                     )
                 response.status = 200
                 return
-            except AttributeError:
+            except AttributeError as e:
                 print("AttributeError=" + str(e))
                 response.status = 500
                 return
@@ -276,11 +326,17 @@ def new_ticket():
     else:
         redirect('/login')
 
+
 @put('/ticket/<ticket_id>/action/<action>')
 def ticket_action(ticket_id, action):
-    start_time = time()
+    """
+    Performs an action on a given ticket
+
+    :param ticket_id: Id of the target ticket
+    :param action: action to apply
+    """
     try:
-    	user_id = request.get_cookie('account', secret='secret')
+        user_id = request.get_cookie('account', secret='secret')
     except AttributeError as e:
         print("AttributeError=" + str(e))
         response.status = 500
@@ -309,9 +365,15 @@ def ticket_action(ticket_id, action):
     else:
         redirect('/login')
 
+
 @post('/ticket/<ticket_id>/comment/<msg>')
-def comment(ticket_id, msg):
-    start_time = time()
+def ticket_action(ticket_id, msg):
+    """
+    Add a comment to a ticket
+
+    :param ticket_id: Id of the target ticket
+    :param msg: body of the comment
+    """
     try:
         user_id = request.get_cookie('account', secret='secret')
     except AttributeError as e:
@@ -321,7 +383,7 @@ def comment(ticket_id, msg):
     if user_id:
         if user_id in user_auth.ids.keys():
             try:
-                comment_the_ticket(
+                comment_ticket(
                     user_auth.get_rt_object_from_email(
                         user_auth.get_email_from_id(user_id)
                     ),
@@ -340,11 +402,17 @@ def comment(ticket_id, msg):
     else:
         redirect('/login')
 
+
 @get('/ticket/<ticket_id:int>')
 def get_ticket_details(ticket_id):
+    """
+    Fetch ticket details
+
+    :param ticket_id: Id of the target ticket
+    """
     start_time = time()
     try:
-    	user_id = request.get_cookie('account', secret='secret')
+        user_id = request.get_cookie('account', secret='secret')
     except AttributeError as e:
         print("AttributeError=" + str(e))
         response.status = 500
@@ -376,8 +444,13 @@ def get_ticket_details(ticket_id):
     else:
         redirect('/login')
 
+
 @post('/search')
 def search():
+    """
+    Performs a search on RT
+
+    """
     start_time = time()
     try:
         user_id = request.get_cookie('account', secret='secret')
@@ -410,7 +483,6 @@ def search():
             redirect('/login')
     else:
         redirect('/login')
-    start_time = time()
 
     result = create_default_result()
     if request.query.o == '' or not user_auth.check_id(request.query.o):
@@ -419,12 +491,14 @@ def search():
 
     if not request.forms.get('search'):
         redirect('/?o=%s' % request.query.o)
-    search = request.forms.get('search')
+    request.forms.get('search')
 
     
 ################################################################
 #   NOT REWORKED
+#   None of this is used. Left for legacy purposes
 ################################################################
+
 
 @get('/detail/<email>')
 def email_detail(email):
@@ -479,7 +553,6 @@ def email_detail(email):
     return template('ticket_list', result)
 
 
-
 @get('/ticket/<ticket_id:int>/history/<item_id:int>')
 def get_history_item_details(ticket_id, item_id):
     start_time = time()
@@ -498,14 +571,12 @@ def get_history_item_details(ticket_id, item_id):
 
     rt_api = user_auth.get_rt_object_from_email(user_auth.get_email_from_id(request.query.o))
     details = fetch_history_item(rt_api, ticket_id, item_id)
-
+    pp.pprint(details)
     result.update(details)
 
     result.update({'time_spent': '%0.2f seconds' % (time() - start_time)})
 
     return template('history_item_details', result)
-
-
 
 
 class SummaryGenerator(threading.Thread):
