@@ -40,6 +40,7 @@ from ditic_kanban.rt_api import fetch_history_item
 from ditic_kanban.statistics import get_date
 from ditic_kanban.statistics import get_statistics
 from ditic_kanban.tools import comment_the_ticket
+from ditic_kanban.tools import archive_all_tickets
 
 
 # My first global variable...
@@ -389,6 +390,40 @@ def comment_action(ticket_id, msg):
                     ),
                     ticket_id,
                     msg
+                    )
+                response.status = 200
+                return
+            except AttributeError as e:
+                print("AttributeError=" + str(e))
+                response.status = 500
+                return
+        else:
+            del_auth()
+            redirect('/login')
+    else:
+        redirect('/login')
+
+
+@post('/ticket/archive')
+def archive_action():
+    """
+    Archive a ticket by changing a ticket to deleted in RT
+
+    """
+    try:
+        user_id = request.get_cookie('account', secret='secret')
+    except AttributeError as e:
+        print("AttributeError=" + str(e))
+        response.status = 500
+        return
+    if user_id:
+        if user_id in user_auth.ids.keys():
+            try:
+                archive_all_tickets(
+                    user_auth.get_rt_object_from_email(
+                        user_auth.get_email_from_id(user_id)
+                    ),
+                    user_auth.get_email_from_id(user_id)
                     )
                 response.status = 200
                 return

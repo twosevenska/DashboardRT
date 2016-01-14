@@ -186,8 +186,8 @@
     <div class="row">
         <h2 class="col-md-3">Stalled</h2>
         <h2 class="col-md-3">In</h2>
-        <h2 class="col-md-3">Active</h2>
-        <h2 class="col-md-3">Done</h2>
+        <h2 class="col-md-4">Active</h2>
+        <h2 class="col-md-2">Done</h2>
     </div>
 
     <div class="row">
@@ -221,18 +221,27 @@
                 (max: {{email_limit[status]}})
             % end
         </h4>
-        <h4 class="col-md-2">
-            % status = 'resolved'
-            % if status in number_tickets_per_status >= 1:
-                {{number_tickets_per_status[status]}}
-            % else:
-                0
-            % end
-            % if status in email_limit:
-                (max: {{email_limit[status]}})
-            % end
-        </h4>
+        <div class="col-md-1">
+            <h4>
+                % status = 'resolved'
+                % if status in number_tickets_per_status >= 1:
+                    {{number_tickets_per_status[status]}}
+                % else:
+                    0
+                % end
+                % if status in email_limit:
+                    (max: {{email_limit[status]}})
+                % end
+            </h4>
+        </div>
+        <h6 class="col-md-1">
+                <button onclick="archiveButton()" type="button" title="Archive Ticket">
+                                    <span class="glyphicon glyphicon-folder-open" aria-hidden="true"></span>
+                    </button>
+        </h6>
     </div>
+
+
 
     <!-- Row for ticket tables -->
 	<div class="row">
@@ -500,6 +509,26 @@
                   }
             }
         });
+    }
+
+    function archiveButton(){
+        var r = confirm("Are you sure you want to archive all closed tickets?");
+        if (r == true) {
+            $.ajax({
+                type: "POST",
+                url: "/ticket/archive",
+                contentType: "application/json",
+                success: function (data) {
+                    window.location.reload();
+                },
+                statusCode: {
+                    500: function() {
+                        window.location.reload();
+                        alert('Unable to resolve action');
+                      }
+                }
+            });
+        }
     }
 
     function onCreateClick(){

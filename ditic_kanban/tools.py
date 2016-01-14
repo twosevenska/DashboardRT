@@ -433,6 +433,42 @@ def comment_the_ticket(rt_object, ticket_id, text):
     }
 
 
+def archive_all_tickets(rt_object, email):
+    """
+    Archives all tickets associated with a user
+
+    :param rt_object: rt object for querying (must be users authenticated)
+    :param email: The user email
+
+    """
+    response = user_closed_tickets_simple(rt_object, email)
+
+    for ticket in response:
+        archive_the_ticket(rt_object, ticket['id'])
+
+
+def archive_the_ticket(rt_object, ticket_id):
+    """
+    Archive a ticket
+
+    :param rt_object: rt object for querying (must be users authenticated)
+    :param ticket_id: The Id of the ticket
+
+    :return: a dictionary
+    """
+    result = modify_ticket(
+        rt_object,
+        ticket_id,
+        {
+            'Status': 'deleted',
+        }
+    )
+
+    return {
+        'action_result': result
+    }
+
+
 def get_ticket_action_and_message(action):
     """
     This simply splits the action and it's text received from the browser
@@ -455,13 +491,40 @@ def get_ticket_action_and_message(action):
 
 
 # noinspection PyArgumentList
+def user_closed_tickets_simple(rt_object, email):
+    """
+    Gets the closed tickets of a user
+
+    :param rt_object: RTApi object
+    :param email: the user email (it must exist in the config)
+    :return: A dictionary
+    """
+    config = DITICConfig()
+
+    # Check if user is known...
+    if not config.check_if_email_exist(email):
+        raise ValueError('Unknown email/user:'+email)
+
+    # The search string
+    query = 'Owner = "%s" AND Queue = "general" AND  Status = "resolved"' % (email)
+
+    # Get the information from the server.
+    try:
+        response = get_list_of_tickets(rt_object, query)
+    except NameError as e:
+        raise ValueError('Error: '+str(e))
+
+    return response
+
+
+# noinspection PyArgumentList
 def user_closed_tickets(rt_object, email):
     """
     Get the closed tickets on the last X days. (X = 60)
 
     :param rt_object: RTApi object
     :param email: the user email (it must exist in the config)
-    :return:
+    :return: A dictionary with the tickets, number per status and the email limit
     """
     config = DITICConfig()
 
