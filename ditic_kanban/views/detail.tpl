@@ -16,6 +16,7 @@
     <link href="static/res/css/dashboard.css" rel="stylesheet">
     <link href="static/res/css/sidebar.css" rel="stylesheet">
     <link href="static/res/css/bootstrap-table/bootstrap-table.css" rel="stylesheet">
+    <script src="/static/res/js/cheet.min.js" type="text/javascript"></script>
 </head>
 <body background="static/res/img/background.png" style="background-repeat: repeat;">
 <nav class="navbar navbar-inverse navbar-fixed-top">
@@ -489,6 +490,29 @@
   </div>
 
 <script>
+    cheet('up up down down left right left right b a', function () {
+        var audio = new Audio('static/ni.mp3');
+        audio.play();
+    });
+
+    cheet('m z r e l a', function () {
+        var audio = new Audio('static/fart.mp3');
+        audio.play();
+    });
+
+    cheet('i d d q d', function () {
+        var audio = new Audio('static/killedkenny.mp3');
+        audio.play();
+    });
+
+    cheet('l o g i c b o x', function () {
+        window.open("http://candybox2.net");
+    });
+
+    cheet('d i g i t a l b o x', function () {
+        window.open("https://www.reddit.com/r/ProgrammerHumor/");
+    });
+
     function actionButton(ticketId, action, ticketStatus){
         if(ticketStatus=='open'){
             str = prompt("Enter conclusion condition:", "");
