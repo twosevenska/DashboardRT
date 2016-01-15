@@ -80,7 +80,7 @@ def user_tickets_details(rt_object, email, requestor_email=None):
     """
 
     query = 'Owner = "'+email+'" AND Queue = "general" '
-
+    pp = pprint.PrettyPrinter(indent=2)
     config = DITICConfig()
 
     # If the user is dir, then build the search
@@ -116,12 +116,48 @@ def user_tickets_details(rt_object, email, requestor_email=None):
     except ValueError as e:
         response = []
 
-    if email == 'dir' or email == 'dir-inbox' or email == 'unknown':
+    if email == 'unknown':
         number_tickets_per_status = {email: len(response)}
         result = group_result_by(response, 'priority')
+
         for priority in result:
             for line in result[priority]:
                 create_ticket_possible_actions(config, line, email, number_tickets_per_status, requestor_email)
+
+    elif email == 'dir' or email == 'dir-inbox':
+        number_tickets_per_status = {email: len(response)}
+        result = group_result_by(response, 'priority')
+        if requestor_email or email == 'dir':
+            if email == 'dir':
+                query = 'Queue = "general" AND ' \
+                        '"CF.{IS - Informatica e Sistemas}" = "DIR-INBOX" AND Owner = "Nobody"  AND ' \
+                        'Status != "resolved" AND Status != "deleted" '
+                requestor_email = 'dir-inbox'
+
+            else:
+                query = 'Owner = "'+requestor_email+'" AND Queue = "general" AND  (  Status != "deleted" )'
+
+            try:
+                response = get_list_of_tickets(rt_object, query)
+            except ValueError as e:
+                response = []
+
+            number_tickets_user_in = 0
+            response_grouped_by_status = group_result_by(response, 'status')
+            if 'new' in response_grouped_by_status:
+                number_tickets_user_in = len(response_grouped_by_status['new'])
+
+            for priority in result:
+                for line in result[priority]:
+                    create_ticket_possible_actions(config, line,
+                                                   email, number_tickets_per_status,
+                                                   requestor_email, number_tickets_user_in)
+        else:
+            number_tickets_per_status = {email: len(response)}
+            result = group_result_by(response, 'priority')
+            for priority in result:
+                for line in result[priority]:
+                    create_ticket_possible_actions(config, line, email, number_tickets_per_status, requestor_email)
     else:
         # Get some statistics
         response_grouped_by_status = group_result_by(response, 'status')
@@ -131,11 +167,38 @@ def user_tickets_details(rt_object, email, requestor_email=None):
 
         result = {}
         for status in response_grouped_by_status:
-            grouped_by_priority = group_result_by(response_grouped_by_status[status], 'priority')
-            result[status] = grouped_by_priority
-            for priority in grouped_by_priority:
-                for line in grouped_by_priority[priority]:
-                    create_ticket_possible_actions(config, line, email, number_tickets_per_status)
+            if status == 'new':
+                query = 'Queue = "general" AND ' \
+                        '"CF.{IS - Informatica e Sistemas}" = "DIR-INBOX" AND Owner = "Nobody"  AND ' \
+                        'Status != "resolved" AND Status != "deleted" '
+                try:
+                    response_dir_in = get_list_of_tickets(rt_object, query)
+                except ValueError as e:
+                    response_dir_in = []
+
+                status_new = group_result_by(response_dir_in, 'status')
+                number_tickets_dir_inbox=0
+                if 'new' in status_new:
+                    number_tickets_dir_inbox = len(status_new['new'])
+                next_limit = 0
+                if 'open' in number_tickets_per_status:
+                    next_limit = number_tickets_per_status['open']
+
+                grouped_by_priority = group_result_by(response_grouped_by_status[status], 'priority')
+                result[status] = grouped_by_priority
+                for priority in grouped_by_priority:
+                    for line in grouped_by_priority[priority]:
+                        create_ticket_possible_actions(config, line,
+                                                       email, number_tickets_per_status,
+                                                       'dir-inbox', number_tickets_dir_inbox, next_limit)
+            else:
+                grouped_by_priority = group_result_by(response_grouped_by_status[status], 'priority')
+
+                result[status] = grouped_by_priority
+                for priority in grouped_by_priority:
+                    for line in grouped_by_priority[priority]:
+
+                        create_ticket_possible_actions(config, line, email, number_tickets_per_status)
 
     # The user limits...
     email_limit = config.get_email_limits(email)
@@ -201,11 +264,12 @@ def ticket_actions(rt_object, ticket_id, action, ticket_email, user_email):
     # There is so much to be done. So this is the default answer.
     result = 'Still working on it... sorry for the inconvenience!'
     message = ''
+
     if '-' in action:
         action_and_message = get_ticket_action_and_message(action)
         message = action_and_message[1]
         action = action_and_message[0]
-        
+    print message
     # INCREASE PRIORITY ##############################
     if action == 'increase_priority':
         result = modify_ticket(
@@ -294,9 +358,10 @@ def ticket_actions(rt_object, ticket_id, action, ticket_email, user_email):
                     'status': 'open',
                 }
             )
-            print(result)
-        elif ticket_line['status'] == 'open':
 
+        elif ticket_line['status'] == 'open':
+            if message:
+                comment_the_ticket(rt_object, ticket_id, "conclusion text:"+message)
             result = modify_ticket(
                 rt_object,
                 ticket_id,
@@ -306,9 +371,6 @@ def ticket_actions(rt_object, ticket_id, action, ticket_email, user_email):
                     'status': 'resolved'
                 }
             )
-            if message:
-                comment_ticket(rt_object,ticket_id,message)
-
 
     # STALLED ##############################
     elif action == 'stalled':
@@ -624,3 +686,66 @@ def get_dir_inbox_num():
     for status in summary['dir-inbox']:
         total += summary['dir-inbox'][status]
     return total
+
+
+def archive_all_tickets(rt_object, email):
+    """
+    Archives all tickets associated with a user
+
+    :param rt_object: rt object for querying (must be users authenticated)
+    :param email: The user email
+
+    """
+    response = user_closed_tickets_simple(rt_object, email)
+
+    for ticket in response:
+        archive_the_ticket(rt_object, ticket['id'])
+
+
+def archive_the_ticket(rt_object, ticket_id):
+    """
+    Archive a ticket
+
+    :param rt_object: rt object for querying (must be users authenticated)
+    :param ticket_id: The Id of the ticket
+
+    :return: a dictionary
+    """
+    result = modify_ticket(
+        rt_object,
+        ticket_id,
+        {
+            'Status': 'deleted',
+        }
+    )
+
+    return {
+        'action_result': result
+    }
+
+
+# noinspection PyArgumentList
+def user_closed_tickets_simple(rt_object, email):
+    """
+    Gets the closed tickets of a user
+
+    :param rt_object: RTApi object
+    :param email: the user email (it must exist in the config)
+    :return: A dictionary
+    """
+    config = DITICConfig()
+
+    # Check if user is known...
+    if not config.check_if_email_exist(email):
+        raise ValueError('Unknown email/user:'+email)
+
+    # The search string
+    query = 'Owner = "%s" AND Queue = "general" AND  Status = "resolved"' % (email)
+
+    # Get the information from the server.
+    try:
+        response = get_list_of_tickets(rt_object, query)
+    except NameError as e:
+        raise ValueError('Error: '+str(e))
+
+    return response

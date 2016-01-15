@@ -40,7 +40,7 @@ from ditic_kanban.rt_api import fetch_history_item
 from ditic_kanban.statistics import get_date
 from ditic_kanban.statistics import get_statistics
 from ditic_kanban.tools import comment_the_ticket
-
+from ditic_kanban.tools import archive_all_tickets
 
 # My first global variable...
 user_auth = UserAuth()
@@ -132,9 +132,10 @@ def get_detail():
     user_id = request.get_cookie('account', secret='secret')
     if user_id:
         if user_id in user_auth.ids.keys():
+            user_email = user_auth.get_email_from_id(user_id)
             result = create_default_result()
-            result.update({'username': result['alias'][user_auth.get_email_from_id(user_id)]})
-            result.update({'email': user_auth.get_email_from_id(user_id)})
+            result.update({'username': result['alias'][user_email]})
+            result.update({'email': user_email})
             result.update({'username_id': user_id})
 
             result.update(user_tickets_details(
@@ -145,7 +146,8 @@ def get_detail():
             result.update({'dirinbox': user_tickets_details(
                 user_auth.get_rt_object_from_email(
                     user_auth.get_email_from_id(user_id)
-                 ), 'dir-inbox')})
+                 ), 'dir-inbox', user_email)})
+
             result.update({'time_spent': '%0.2f seconds' % (time() - start_time)})
             return template('detail', result)
         else:
@@ -168,7 +170,7 @@ def get_board():
             result = create_default_result()
             result.update({'username': result['alias'][user_auth.get_email_from_id(user_id)]})
             result.update({'username_id': user_id})
-            
+
             today = date.today().isoformat()
             result.update({'statistics': get_statistics(get_date(30, today), today)})
 
@@ -183,7 +185,7 @@ def get_board():
 
 
 @route('/user')
-def get_board():
+def get_self():
     """
     Fetch the user page
 
@@ -201,7 +203,7 @@ def get_board():
 
             result.update({'urgent': get_urgent_tickets(rt_object)})
             result.update({'time_spent': '%0.2f seconds' % (time() - start_time)})
-            return template('board', result)
+            return template('user', result)
         else:
             del_auth()
             redirect('/login')
@@ -239,6 +241,7 @@ def get_admin_board():
             redirect('/login')
     else:
         redirect('/login')
+
 
 ################################################################
 #   REST API
@@ -420,13 +423,14 @@ def get_ticket_details(ticket_id):
     if user_id:
         if user_id in user_auth.ids.keys():
             try:
+                user_email = user_auth.get_email_from_id(user_id)
                 result = create_default_result()
-                result.update({'username': user_auth.get_email_from_id(user_id)})
-                result.update({'email': search})
+                result.update({'username': result['alias'][user_auth.get_email_from_id(user_id)]})
+                result.update({'email': user_email})
                 result.update({'username_id': user_id})
                 result.update({'ticket_id': ticket_id})
 
-                rt_api = user_auth.get_rt_object_from_email(user_auth.get_email_from_id(user_id))
+                rt_api = user_auth.get_rt_object_from_email(user_email)
                 details = fetch_ticket_details(rt_api, ticket_id)
                 result.update(details)
                 history = fetch_ticket_brief_history(rt_api, ticket_id)
@@ -445,8 +449,8 @@ def get_ticket_details(ticket_id):
         redirect('/login')
 
 
-@post('/search')
-def search():
+@get('/search/<s>')
+def search(s):
     """
     Performs a search on RT
 
@@ -461,15 +465,17 @@ def search():
     if user_id:
         if user_id in user_auth.ids.keys():
             try:
+                user_email = user_auth.get_email_from_id(user_id)
+
                 result = create_default_result()
-                result.update({'username': user_auth.get_email_from_id(user_id)})
-                result.update({'email': search})
+                result.update({'username': result['alias'][user_email]})
+                result.update({'email': user_email})
                 result.update({'username_id': user_id})
 
                 result.update(search_tickets(
                     user_auth.get_rt_object_from_email(
                         user_auth.get_email_from_id(user_id)
-                    ), search))
+                    ), s))
 
                 result.update({'time_spent': '%0.2f seconds' % (time() - start_time)})
                 response.status = 200
@@ -484,19 +490,81 @@ def search():
     else:
         redirect('/login')
 
-    result = create_default_result()
-    if request.query.o == '' or not user_auth.check_id(request.query.o):
-        result.update({'message': ''})
-        return template('auth', result)
 
-    if not request.forms.get('search'):
-        redirect('/?o=%s' % request.query.o)
-    request.forms.get('search')
+@get('/ticket/<ticket_id:int>/history/<item_id:int>')
+def get_history_item_details(ticket_id, item_id):
+    start_time = time()
+    try:
+        user_id = request.get_cookie('account', secret='secret')
+    except AttributeError as e:
+        print("AttributeError=" + str(e))
+        response.status = 500
+        return
+    if user_id:
+        if user_id in user_auth.ids.keys():
+            try:
+                result = create_default_result()
+                result.update({'title': 'Ticket #{tid}, history item #{iid}'.format(tid=ticket_id, iid=item_id)})
+                result.update({'username': result['alias'][user_auth.get_email_from_id(user_id)]})
+                result.update({'username_id': user_id})
+                result.update({'email': user_auth.get_email_from_id(user_id)})
+                result.update({'ticket_id': ticket_id})
+                result.update({'item_id': item_id})
+                rt_api = user_auth.get_rt_object_from_email(user_auth.get_email_from_id(user_id))
+                details = fetch_history_item(rt_api, ticket_id, item_id)
 
-    
+                result.update(details)
+
+                result.update({'time_spent': '%0.2f seconds' % (time() - start_time)})
+
+                response.status = 200
+                return template('history_item_details', result)
+            except AttributeError as e:
+                print("AttributeError=" + str(e))
+                response.status = 500
+                return
+        else:
+            del_auth()
+            redirect('/login')
+    else:
+        redirect('/login')
+
+
+@post('/ticket/archive')
+def archive_action():
+    """
+    Archive a ticket by changing a ticket to deleted in RT
+
+    """
+    try:
+        user_id = request.get_cookie('account', secret='secret')
+    except AttributeError as e:
+        print("AttributeError=" + str(e))
+        response.status = 500
+        return
+    if user_id:
+        if user_id in user_auth.ids.keys():
+            try:
+                archive_all_tickets(
+                    user_auth.get_rt_object_from_email(
+                        user_auth.get_email_from_id(user_id)
+                    ),
+                    user_auth.get_email_from_id(user_id)
+                    )
+                response.status = 200
+                return
+            except AttributeError as e:
+                print("AttributeError=" + str(e))
+                response.status = 500
+                return
+        else:
+            del_auth()
+            redirect('/login')
+    else:
+        redirect('/login')
+
 ################################################################
 #   NOT REWORKED
-#   None of this is used. Left for legacy purposes
 ################################################################
 
 
@@ -553,32 +621,6 @@ def email_detail(email):
     return template('ticket_list', result)
 
 
-@get('/ticket/<ticket_id:int>/history/<item_id:int>')
-def get_history_item_details(ticket_id, item_id):
-    start_time = time()
-
-    result = {'title': 'Ticket #{tid}, history item #{iid}'.format(tid=ticket_id, iid=item_id)}
-
-    if request.query.o == '' or not user_auth.check_id(request.query.o):
-        result.update({'message': ''})
-        return template('auth', result)
-
-    result.update({'username': user_auth.get_email_from_id(request.query.o)})
-    result.update({'username_id': request.query.o})
-
-    result.update({'ticket_id': ticket_id})
-    result.update({'item_id': item_id})
-
-    rt_api = user_auth.get_rt_object_from_email(user_auth.get_email_from_id(request.query.o))
-    details = fetch_history_item(rt_api, ticket_id, item_id)
-    pp.pprint(details)
-    result.update(details)
-
-    result.update({'time_spent': '%0.2f seconds' % (time() - start_time)})
-
-    return template('history_item_details', result)
-
-
 class SummaryGenerator(threading.Thread):
     def __init__(self, delay):
         threading.Thread.__init__(self)
@@ -594,10 +636,9 @@ class SummaryGenerator(threading.Thread):
             generate_summary_file()
             sleep(self.delay)
             stats_update_json_file()
-            print("generating summary...")
 
 
 def start_server():
     generate_summary_file()
-    SummaryGenerator(5).start()
+    SummaryGenerator(30).start()
     run(server='paste', host='0.0.0.0', debug=True)

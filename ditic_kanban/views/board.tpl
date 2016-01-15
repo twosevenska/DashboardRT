@@ -105,52 +105,53 @@
     <!-- FIXED NAVBAR
     -->
     <nav class="navbar navbar-inverse navbar-fixed-top">
-      <div class="navbar-collapse collapse">
-        <ul class="nav navbar-nav navbar-left">
-          <a class="navbar-brand" href='/board'>Board</a>
-          <a class="navbar-brand" href="/income">Income</a>
-          <a class="navbar-brand" id="tickets" href="/detail">My Tickets</a>
+  <div class="navbar-collapse collapse">
+    <ul class="nav navbar-nav navbar-left">
+      <a class="navbar-brand" href="/board">Board</a>
+      <a class="navbar-brand" href="/income">Income</a>
+      <a class="navbar-brand" id="tickets" href="/detail">My Tickets</a>
+    </ul>
+    <!-- ADMIN -->
+      <ul class="nav navbar-nav navbar-right">
+        <li class="dropdown">
+          <a href="" class="dropdown-toggle m_right" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{username}}<span class="caret"></span></a>
+          <ul class="dropdown-menu">
+            <li align="center"><a href="" onclick="onProfileClick()">Profile</a></li>
+            <li align="center"><a href="#">Preferences</a></li>
+            <li align="center"><a href="" onClick="onLogoutClick()">Logout</a></li>
+          </ul>
+        </li>
+      </ul>
+      <!-- SEARCH -->
+      <ul class="navbar-form navbar-right">
+        <input id="search" type="text" class="form-control" placeholder="Search..." />
+        <button id="sBtn" type="button" class="btn btn-primary" onclick="clickSearch()">Search</button>
+      </ul>
+
+      <!-- NEW TICKET -->
+      <ul class="nav navbar-nav navbar-right">
+        <li class="dropdown">
+            <a href="#" class="dropdown-toggle m_right" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">New ticket<span class="caret"></span></a>
+            <ul class="dropdown-menu">
+        <li><p align="center" style="color:black;">
+            <b>Create quick ticket:</b>
+            </br>
+            Subject: <input id="sub" type="text" placeholder="Subject">
+            Text: <input id="text" type="text" placeholder="Text here">
+        </p></li>
+
+        <li role="separator" class="divider"></li>
+        <li><p align="center" style="color:black;">
+            <button type="button" class="btn btn-primary" onclick="onCreateClick()">create</button>
+        </p></li>
         </ul>
-        <!-- ADMIN -->
-          <ul class="nav navbar-nav navbar-right">
-            <li class="dropdown">
-              <a href="" class="dropdown-toggle m_right" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{username}}<span class="caret"></span></a>
-              <ul class="dropdown-menu">
-                <li><a href="#">Profile</a></li>
-                <li><a href="#">Preferences</a></li>
-                <li><a href="" onClick="onLogoutClick()">Logout</a></li>
-                <!--<li role="separator" class="divider"></li>
-                <li class="dropdown-header">Nav header</li>
-                <li><a href="#">Separated link</a></li>
-                <li><a href="#">One more separated link</a></li>-->
-              </ul>
-            </li>
-          </ul>
-          <!-- SEARCH -->
-          <form class="navbar-form navbar-right">
-            <input type="text" class="form-control" placeholder="Search...">
-            <button type="submit" class="btn btn-primary">Search</button>
-          </form>
-          <!-- NEW TICKET -->
-          <ul class="nav navbar-nav navbar-right">
-            <li class="dropdown">
-              <a href="#" class="dropdown-toggle m_right" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">New ticket <span class="caret"></span></a>
-              <ul class="dropdown-menu">
-                <li>
-                  <p>
-                    <b>Create quick ticket:</b>
-                    </br>
-                    Subject: <input id="sub" type="text" placeholder="Subject">
-                    Text: <input id="text" type="text" placeholder="Text here">
-                    <!--<ul><li><a href="#">Advanced Ticket Creation</a></li></ul>-->
-                    <button type="submit" class="btn btn-primary" onclick="onCreateClick()">Create</button>
-                  </p>
-                </li>
-              </ul>
-            </li>
-          </ul>
-      </div>
-    </nav>
+    </li>
+  </ul>
+
+  </div>
+
+</nav>
+
 
 <br><br><br><br><br>
 

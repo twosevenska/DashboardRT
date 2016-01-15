@@ -33,21 +33,17 @@
         <li class="dropdown">
           <a href="" class="dropdown-toggle m_right" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{username}}<span class="caret"></span></a>
           <ul class="dropdown-menu">
-            <li><a href="#">Profile</a></li>
-            <li><a href="#">Preferences</a></li>
-            <li><a href="" onClick="onLogoutClick()">Logout</a></li>
-            <!--<li role="separator" class="divider"></li>
-            <li class="dropdown-header">Nav header</li>
-            <li><a href="#">Separated link</a></li>
-            <li><a href="#">One more separated link</a></li>-->
+            <li align="center"><a href="" onclick="onProfileClick()">Profile</a></li>
+            <li align="center"><a href="#">Preferences</a></li>
+            <li align="center"><a href="" onClick="onLogoutClick()">Logout</a></li>
           </ul>
         </li>
       </ul>
       <!-- SEARCH -->
-      <form id="form1" class="navbar-form navbar-right">
-        <input id="inBtn" type="text" class="form-control" placeholder="Search..." />
-        <button id="sBtn" type="button" class="btn btn-primary"action="clickSearch()">Search</button>
-      </form>
+      <ul class="navbar-form navbar-right">
+        <input id="search" type="text" class="form-control" placeholder="Search..." />
+        <button id="sBtn" type="button" class="btn btn-primary" onclick="clickSearch()">Search</button>
+      </ul>
 
       <!-- NEW TICKET -->
       <ul class="nav navbar-nav navbar-right">
@@ -60,7 +56,7 @@
             Subject: <input id="sub" type="text" placeholder="Subject">
             Text: <input id="text" type="text" placeholder="Text here">
         </p></li>
-        
+
         <li role="separator" class="divider"></li>
         <li><p align="center" style="color:black;">
             <button type="button" class="btn btn-primary" onclick="onCreateClick()">create</button>
@@ -70,8 +66,9 @@
   </ul>
 
   </div>
-  
+
 </nav>
+
 
 
 <div class="container">
@@ -91,7 +88,7 @@
                     <th data-valign="middle"></th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody align="center">
                 % for priority in sorted(dir['tickets'], reverse=True):
                     % for ticket in dir['tickets'][priority]:
                         %if 'yes' in ticket['cf.{ditic-urgent}']:
@@ -142,7 +139,7 @@
                     <th data-valign="middle"></th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody align="center">
                 % for priority in sorted(dirinbox['tickets'], reverse=True):
                     % for ticket in dirinbox['tickets'][priority]:
                         %if 'yes' in ticket['cf.{ditic-urgent}']:
@@ -252,9 +249,38 @@
                     console.log("complete.statusCode=" + data.statusCode);
                 },
                 success: function (data) {
-                    window.location.href = "/ticket/"+ticketId;
+                    window.open('http://127.0.0.1:8080/ticket/'+ticketId);
                 }
             });
+        }
+        function clickSearch() {
+
+        $.ajax({
+            type: "GET",
+            url: "/search/"+document.getElementById('search').value,
+
+            contentType: "application/json",
+            complete: function (data, textStatus) {
+                console.log("complete.statusCode=" + data.statusCode);
+            },
+            success: function (data) {
+                window.location.href = "/search/"+document.getElementById('search').value;
+            }
+        });
+        }
+    function onProfileClick() {
+             $.ajax({
+                type: "GET",
+                url: "/user",
+                data: "{}",
+                contentType: "application/json",
+                complete: function (data, textStatus) {
+                    console.log("complete.statusCode=" + data.statusCode);
+                },
+                success: function (data) {
+                    window.open('http://127.0.0.1:8080/user');
+            }
+        });
         }
 </script>
   </body>
